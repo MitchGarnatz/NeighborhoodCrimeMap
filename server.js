@@ -28,17 +28,17 @@ let db = new sqlite3.Database(db_filename, sqlite3.OPEN_READWRITE, (err) => {
 // GET request handler for crime codes
 app.get('/codes', (req, res) => {
     console.log(req.query); // query object (key-value pairs after the ? in the url)
-    let p, q;
+    let q, p, x;
     let query = req.query
     if(query.hasOwnProperty('code')) {
         p = "("+query.code+")"
         console.log('P:', p)
-        q = "SELECT * FROM Codes WHERE Code IN ?"
+        q = 'SELECT * FROM Codes WHERE code IN ' + p; //Not the way to do this but it works. Always get a syntax error if using the ? symbol
     } else {
         q = 'SELECT * FROM Codes';
     }
-
-    databaseSelect(q, p)
+    
+    databaseSelect(q, x)
     .then((data) => {
         res.status(200).type('json').send(data); // <-- you will need to change this
     })
@@ -46,11 +46,22 @@ app.get('/codes', (req, res) => {
 
 });
 
+
 // GET request handler for neighborhoods
 app.get('/neighborhoods', (req, res) => {
-    console.log(req.query); // query object (key-value pairs after the ? in the url)
-    
-    res.status(200).type('json').send({}); // <-- you will need to change this
+    let p, q;
+    let query = req.query
+    console.log(query);
+    if(query.hasOwnProperty('neighborhood')) {
+        q = "SELECT * FROM Neighborhoods WHERE neighborhood_number IN " + '('+query.neighborhood+')';
+    } else {
+        q = 'SELECT * FROM Neighborhoods';
+    }
+
+    databaseSelect(q, p)
+    .then((data) => {
+        res.status(200).type('json').send(data); // <-- you will need to change this
+    })
 });
 
 // GET request handler for crime incidents
