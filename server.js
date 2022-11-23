@@ -37,7 +37,7 @@ app.get('/codes', (req, res) => {
     } else {
         q = 'SELECT * FROM Codes';
     }
-    
+
     databaseSelect(q, x)
     .then((data) => {
         res.status(200).type('json').send(data); // <-- you will need to change this
@@ -67,8 +67,24 @@ app.get('/neighborhoods', (req, res) => {
 // GET request handler for crime incidents
 app.get('/incidents', (req, res) => {
     console.log(req.query); // query object (key-value pairs after the ? in the url)
+    let p, q;
+    let query = req.query
+    console.log(query);
+
+    q = 'SELECT * FROM Incidents ORDER BY date_time LIMIT 1000';
+
+    databaseSelect(q, p)
+    .then((data) => {
+        console.log(data);
+        data.forEach(element => {
+            date_time = element.date_time.split('T')
+            element.date = date_time[0];
+            element.time = date_time[1];
+            delete element.date_time;
+        });
+        res.status(200).type('json').send(data); // <-- you will need to change this
+    })
     
-    res.status(200).type('json').send({}); // <-- you will need to change this
 });
 
 // PUT request handler for new crime incident
