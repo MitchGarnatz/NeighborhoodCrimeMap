@@ -66,7 +66,7 @@ app.get('/neighborhoods', (req, res) => {
         console.log(p);
         console.log(q);
 
-        q = "SELECT * FROM Neighborhoods WHERE neighborhood_number IN ?";
+        //q = "SELECT * FROM Neighborhoods WHERE neighborhood_number IN ?";
     } else {
         q = 'SELECT * FROM Neighborhoods';
     }
