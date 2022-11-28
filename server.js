@@ -51,9 +51,22 @@ app.get('/codes', (req, res) => {
 app.get('/neighborhoods', (req, res) => {
     let p, q;
     let query = req.query
+    
     console.log(query);
     if(query.hasOwnProperty('neighborhood')) {
-        q = "SELECT * FROM Neighborhoods WHERE neighborhood_number IN " + '('+query.neighborhood+')';
+        q = "SELECT * FROM Neighborhoods WHERE neighborhood_number = ?";
+        p = query.neighborhood;
+        p = p.split(',');
+
+        for(let i = 1; i < p.length; i++){
+            q = q + ' OR neighborhood_number = ?';
+        }
+        
+
+        console.log(p);
+        console.log(q);
+
+        q = "SELECT * FROM Neighborhoods WHERE neighborhood_number IN ?";
     } else {
         q = 'SELECT * FROM Neighborhoods';
     }
