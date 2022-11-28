@@ -57,16 +57,9 @@ app.get('/neighborhoods', (req, res) => {
         q = "SELECT * FROM Neighborhoods WHERE neighborhood_number = ?";
         p = query.neighborhood;
         p = p.split(',');
-
         for(let i = 1; i < p.length; i++){
             q = q + ' OR neighborhood_number = ?';
         }
-        
-
-        console.log(p);
-        console.log(q);
-
-        //q = "SELECT * FROM Neighborhoods WHERE neighborhood_number IN ?";
     } else {
         q = 'SELECT * FROM Neighborhoods';
     }
