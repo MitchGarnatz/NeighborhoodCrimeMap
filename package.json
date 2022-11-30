@@ -3,17 +3,17 @@
     "version": "0.0.0",
     "description": "RESTful API Server using Node JS",
     "author": {
-        "name": "",
-        "email": ""
+        "name": "Michel Franbom",
+        "email": "fran3757@stthomas.edu"
     },
     "contributors": [
         {
-            "name": "",
-            "email": ""
+            "name": "Mitch Garnatz",
+            "email": "garn1876@stthomas.edu"
         },
         {
-            "name": "",
-            "email": ""
+            "name": "David Braun",
+            "email": "brau3654@stthomas.edu"
         }
     ],
     "main": "server.js",
