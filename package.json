@@ -3,7 +3,7 @@
     "version": "0.0.0",
     "description": "RESTful API Server using Node JS",
     "author": {
-        "name": "Michel Franbom",
+        "name": "Michael Franbomb",
         "email": "fran3757@stthomas.edu"
     },
     "contributors": [
@@ -19,7 +19,7 @@
     "main": "server.js",
     "repository": {
         "type": "git",
-        "url": ""
+        "url": "https://github.com/MFrancomb1/Webdev-RESTful-server"
     },
     "dependencies": {
         "express": "^4.18.2",
