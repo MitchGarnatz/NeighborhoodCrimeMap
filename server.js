@@ -106,8 +106,34 @@ app.put('/new-incident', (req, res) => {
 // DELETE request handler for new crime incident
 app.delete('/remove-incident', (req, res) => {
     console.log(req.body); // uploaded data
+
+    let p1, p2, q1, q2;
+    let incidentFound = false;
+    let removeNumber = req.body.case_number;
     
-    res.status(200).type('txt').send('OK'); // <-- you may need to change this
+    q1 = 'SELECT * FROM Incidents WHERE case_number = ' + removeNumber;
+
+    databaseSelect(q1, p1)
+    .then((data) => {
+        console.log(data);
+        data.forEach(element => {
+            //if object found, object will be deleted = true
+            if (element.case_number === '' + removeNumber) {
+                incidentFound = true;
+            }
+        });
+        //if object !found, 500 error will be thrown
+        if (incidentFound == false) {
+            return res.status(500).send({'500 error page: ' :removeNumber + ' does not exist. Try another incident number.'});
+        }
+    })
+    // if case_number is in the DB delete
+    q2 = 'DELETE FROM Incidents WHERE case_number = ' + removeNumber;
+
+    databaseRun(q2, p2)
+    .then(() => {
+        res.status(200).type('txt').send('Incident with case number ' + removeNumber + ' was removed.'); // <-- you may need to change this
+    })
 });
 
 
