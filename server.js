@@ -121,6 +121,47 @@ app.get('/incidents', (req, res) => {
         }
     }
 
+    if(query.hasOwnProperty('grid')) {
+        if(second) {
+            q = q+ ' AND';
+        } else {
+            q = q + ' WHERE';
+            second = true;
+        }
+        let t = query.grid;
+        t = t.split(',');
+        t.forEach(element => {
+            p.push(element);
+        })
+        q = q + ' police_grid = ?';
+        for(let i = 1; i<t.length; i++) {
+            q = q + ' OR police_grid = ?';
+        }
+    }
+
+    if(query.hasOwnProperty('start_date')) {
+        if(second) {
+            q = q + ' AND';
+        } else {
+            q = q + ' WHERE';
+            second = true;
+        }
+        let t = query.start_date;
+        p.push(t);
+        q = q + ' date(date_time) > ?';
+    }
+
+    if(query.hasOwnProperty('end_date')) {
+        if(second) {
+            q = q + ' AND';
+        } else {
+            q = q + ' WHERE';
+            second = true;
+        }
+        let t = query.end_date;
+        p.push(t);
+        q = q + ' date(date_time) < ?';
+    }
 
     q = q + ' ORDER BY date_time';
 
@@ -130,6 +171,7 @@ app.get('/incidents', (req, res) => {
     } else {
         q = q + ' LIMIT 1000';
     }
+
 
     databaseSelect(q, p)
     .then((data) => {
@@ -142,6 +184,7 @@ app.get('/incidents', (req, res) => {
         });
         res.status(200).type('json').send(data); // <-- you will need to change this
     })
+
     
 });
 
