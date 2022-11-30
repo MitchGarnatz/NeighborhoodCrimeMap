@@ -194,35 +194,20 @@ app.put('/new-incident', (req, res) => {
     //select case number and check against query, throw exception if case numbers match. update db otherwise.
     console.log(req.body); // uploaded data
 
-    let p1, p2, q1, q2;
+    let p, q;
     let incidentFound = false;
     let insertCaseNumber = req.body.case_number;
-    console.log(insertCaseNumber);
     let insertDateTime = req.body.date + "T" + req.body.time;
-    console.log(insertDateTime);
     let insertCode = req.body.code;
-    console.log(insertCode);
     let insertIncident = req.body.incident;
-    console.log(insertIncident);
     let insertPoliceGrid = req.body.police_grid;
-    console.log(insertPoliceGrid);
     let insertNeighborhoodNumber = req.body.neighborhood_number;
-    console.log(insertNeighborhoodNumber);
-    let insertBlock = req.body.block;
-    console.log(insertBlock);
-
-    insertDateTime = insertDateTime.split('T')
-    let insertDate = insertDateTime[0];
-    let insertTime = insertDateTime[1];
-    insertTime = insertTime.replaceAll(':', '')
+    let insertBlock = req.body.block.toString();
     
+    //check if obj is in db
+    q = 'SELECT * FROM Incidents WHERE case_number = ' + insertCaseNumber;
 
-    console.log(insertDate);
-    console.log(insertTime);
-    
-    q1 = 'SELECT * FROM Incidents WHERE case_number = ' + insertCaseNumber;
-
-    databaseSelect(q1, p1)
+    databaseSelect(q, p)
     .then((data) => {
         console.log(data);
         data.forEach(element => {
@@ -235,27 +220,20 @@ app.put('/new-incident', (req, res) => {
         if (incidentFound == true) {
             return res.status(500).send({'500 error page: ' :insertCaseNumber + ' already exists. Try another incident number.'});
         }
-
         else {
 
             //if case_number is not in the DB delete
+            q = 'INSERT INTO Incidents (case_number, date_time, code, incident, police_grid, neighborhood_number, block) VALUES \
+            (' + insertCaseNumber + ',\'' + insertDateTime + '\',' + insertCode + ',\'' + insertIncident +'\',' +insertPoliceGrid + ',' 
+            + insertNeighborhoodNumber + ',\'' + insertBlock +'\')';
 
-            // q2 = 'INSERT INTO Incidents (case_number, date_time, code, incident, police_grid, neighborhood_number, block) VALUES (' + insertCaseNumber + ',' + insertDate + '' + insertTime + ',' + insertCode + ',' + insertIncident + ',' + 
-            //       insertPoliceGrid + ',' + insertNeighborhoodNumber + ',' + insertBlock + ')';
-
-            q2 = 'INSERT INTO Incidents (case_number, date_time, code, incident, police_grid, neighborhood_number, block) VALUES \
-            (' + insertCaseNumber + ',' + insertDate  + insertTime + ',' + insertCode + ',null,' +insertPoliceGrid + ',' 
-            + insertNeighborhoodNumber + ',' + insertBlock+ ')';
-            
-            console.log(q2);
-
-            databaseRun(q2, p2)
+            databaseRun(q, p)
             .then(() => {
-                q1 = 'SELECT * FROM Incidents WHERE case_number = ' + insertCaseNumber;
-                databaseSelect(q1, p2)
+                q = 'SELECT * FROM Incidents WHERE case_number = ' + insertCaseNumber;
+                databaseSelect(q, p)
                 .then((data) => {
+                    console.log(data);
                 });
-                
                 res.status(200).type('txt').send('Incident with case number ' + insertCaseNumber + ' was added.'); // <-- you may need to change this
             })
         }
@@ -266,13 +244,13 @@ app.put('/new-incident', (req, res) => {
 app.delete('/remove-incident', (req, res) => {
     console.log(req.body); // uploaded data
 
-    let p1, p2, q1, q2;
+    let p, q;
     let incidentFound = false;
     let removeNumber = req.body.case_number;
     
-    q1 = 'SELECT * FROM Incidents WHERE case_number = ' + removeNumber;
+    q = 'SELECT * FROM Incidents WHERE case_number = ' + removeNumber;
 
-    databaseSelect(q1, p1)
+    databaseSelect(q, p)
     .then((data) => {
         console.log(data);
         data.forEach(element => {
@@ -286,10 +264,10 @@ app.delete('/remove-incident', (req, res) => {
             return res.status(500).send({'500 error page: ' :removeNumber + ' does not exist. Try another incident number.'});
         }
         else {
-                // if case_number is in the DB delete
-            q2 = 'DELETE FROM Incidents WHERE case_number = ' + removeNumber;
+            // if case_number is in the DB delete
+            q = 'DELETE FROM Incidents WHERE case_number = ' + removeNumber;
 
-            databaseRun(q2, p2)
+            databaseRun(q, p)
             .then(() => {
              res.status(200).type('txt').send('Incident with case number ' + removeNumber + ' was removed.'); // <-- you may need to change this
             })
