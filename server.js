@@ -97,10 +97,59 @@ app.get('/incidents', (req, res) => {
 app.put('/new-incident', (req, res) => {
 
     //select case number and check against query, throw exception if case numbers match. update db otherwise.
-
     console.log(req.body); // uploaded data
+
+    let p1, p2, q1, q2;
+    let incidentFound = false;
+    let insertCaseNumber = req.body.case_number;
+    console.log(insertCaseNumber);
     
-    res.status(200).type('txt').send('OK'); // <-- you may need to change this
+    let insertDateTime = req.body.date + 'T' + req.body.time;
+    insertDateTime = element.date_time.split('T')
+    let insertDate = insertDateTime[0];
+    let insertTime = insertDateTime[1];
+
+    let insertCode = req.body.code;
+    let insertIncident = req.body.incident;
+    let insertPoliceGrid = req.body.police_grid;
+    let insertNeihborhoodNumber = req.body.neighborhood_number;
+    let insertBlock = req.body.block;
+    
+    q1 = 'SELECT * FROM Incidents WHERE case_number = ' + insertCaseNumber;
+
+    databaseSelect(q1, p1)
+    .then((data) => {
+        console.log(data);
+        data.forEach(element => {
+            //if object found, object will be deleted = true
+            console.log(element.case_number);
+            console.log(element.date_time);
+            console.log(insertDateTime);
+            if (element.case_number === '' + insertCaseNumber) {
+                incidentFound = true;
+            }
+        });
+        //if object !found, 500 error will be thrown
+        if (incidentFound == true) {
+            return res.status(500).send({'500 error page: ' :insertCaseNumber + ' already exists. Try another incident number.'});
+        }
+
+        else {
+
+            //if case_number is not in the DB delete
+
+            q2 = 'INSERT INTO Incidents (case_number, date_time, code, incident, police_grid, neighborhood_number, block) \
+                  VALUES (' + insertCaseNumber + ',' + insertDateTime + ',' + insertCode + ',' + insertIncident + ',' + 
+                  insertPoliceGrid + ',' + insertNeihborhoodNumber + ',' + insertBlock + ')';
+            
+            console.log(q2);
+
+            databaseRun(q2, p2)
+            // .then(() => {
+            //     res.status(200).type('txt').send('Incident with case number ' + removeNumber + ' was removed.'); // <-- you may need to change this
+            // })
+        }
+    })
 });
 
 // DELETE request handler for new crime incident
