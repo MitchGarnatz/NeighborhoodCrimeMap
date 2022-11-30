@@ -28,17 +28,21 @@ let db = new sqlite3.Database(db_filename, sqlite3.OPEN_READWRITE, (err) => {
 // GET request handler for crime codes
 app.get('/codes', (req, res) => {
     console.log(req.query); // query object (key-value pairs after the ? in the url)
-    let q, p, x;
+    let q, p;
     let query = req.query
+    console.log(query);
     if(query.hasOwnProperty('code')) {
-        p = "("+query.code+")"
-        console.log('P:', p)
-        q = 'SELECT * FROM Codes WHERE code IN ' + p; //Not the way to do this but it works. Always get a syntax error if using the ? symbol
+        q = 'SELECT * FROM Codes WHERE code = ? ';
+        p = query.code;
+        p = p.split(',');
+        for(let i = 1; i < p.length; i++){
+            q = q + ' OR code = ?';
+        }
     } else {
         q = 'SELECT * FROM Codes';
     }
 
-    databaseSelect(q, x)
+    databaseSelect(q, p)
     .then((data) => {
         res.status(200).type('json').send(data); // <-- you will need to change this
     })
@@ -52,7 +56,7 @@ app.get('/neighborhoods', (req, res) => {
     let p, q;
     let query = req.query
     
-    console.log(query);
+
     if(query.hasOwnProperty('neighborhood')) {
         q = "SELECT * FROM Neighborhoods WHERE neighborhood_number = ?";
         p = query.neighborhood;
@@ -74,14 +78,62 @@ app.get('/neighborhoods', (req, res) => {
 app.get('/incidents', (req, res) => {
     console.log(req.query); // query object (key-value pairs after the ? in the url)
     let p, q;
-    let query = req.query
+    p = [];
+    let query = req.query;
+    let second = false;
     console.log(query);
 
-    q = 'SELECT * FROM Incidents ORDER BY date_time LIMIT 1000';
+    q = 'SELECT * FROM Incidents';
+
+    if(query.hasOwnProperty('code')) {
+        if(second){
+            q = q + ' AND';
+        } else {
+            q = q + ' WHERE';
+            second = true;
+        }
+        let t = query.code;
+        t = t.split(',');
+        t.forEach(element =>{
+            p.push(element);
+        })
+        q = q + ' code = ?';
+        for(let i = 1; i < t.length; i++){
+            q = q + ' OR code = ?';
+        }
+    } 
+
+    if(query.hasOwnProperty('neighborhood')) {
+        if(second){
+            q = q + ' AND';
+        } else {
+            q = q + ' WHERE';
+            second = true;
+        }
+        let t = query.neighborhood;
+        t = t.split(',');
+        t.forEach(element =>{
+            p.push(element);
+        })
+        q = q + ' neighborhood_number = ?';
+        for(let i = 1; i < t.length; i++){
+            q = q + ' OR neighborhood_number = ?';
+        }
+    }
+
+
+    q = q + ' ORDER BY date_time';
+
+    if(query.hasOwnProperty('limit')) {
+        q = q + ' LIMIT ?';
+        p.push(query.limit);
+    } else {
+        q = q + ' LIMIT 1000';
+    }
 
     databaseSelect(q, p)
     .then((data) => {
-        console.log(data);
+        
         data.forEach(element => {
             date_time = element.date_time.split('T')
             element.date = date_time[0];
