@@ -137,6 +137,7 @@ app.delete('/remove-incident', (req, res) => {
 });
 
 
+
 // Create Promise for SQLite3 database SELECT query 
 function databaseSelect(query, params) {
     return new Promise((resolve, reject) => {
