@@ -316,3 +316,5 @@ app.listen(port, () => {
 // IN CMD: curl "http://localhost:8000/codes"
 // for puts : curl -X PUT "http//localhost:8000/new-incident" -H "Content-Type: application/json" -d "{\"key1\": 42}"
 // for deletes: curl -X DELETE "http//localhost:8000/remove-incident" -H "Content-Type: application/json" -d "{\"key1\": 42}"
+//curl -X PUT "http://localhost:8000/new-incident" -H "Content-Type: application/json" -d "{\"case_number\": 14174007, \"date\": \"2014-08-17\", \"time\": \"04:02:00\", \"code\": 1410, \"incident\": \"Vandalism\", \"police_grid\": 50, \"neighborhood_number\": 6, \"block\": \"FRONT AV "&" WESTERN\"}"
+//curl -X DELETE "http://localhost:8000/remove-incident" -H "Content-Type: application/json" -d "{\"case_number\": 14174007}"  
