@@ -57,9 +57,9 @@ app.get('/neighborhoods', (req, res) => {
     let query = req.query
     
 
-    if(query.hasOwnProperty('neighborhood')) {
+    if(query.hasOwnProperty('id')) {
         q = "SELECT * FROM Neighborhoods WHERE neighborhood_number = ?";
-        p = query.neighborhood;
+        p = query.id;
         p = p.split(',');
         for(let i = 1; i < p.length; i++){
             q = q + ' OR neighborhood_number = ?';
