@@ -1,6 +1,9 @@
 <script>
 import $ from 'jquery'
 
+//npm run dev -- --port 8000    <-to run the server
+//npm run build                 <-to make the actual files we will turn in
+
 export default {
     data() {
         return {
