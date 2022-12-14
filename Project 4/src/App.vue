@@ -1,5 +1,7 @@
 <script>
 import $ from 'jquery'
+import About from './components/About.vue';
+import NewIncident from './components/NewIncident.vue';
 
 //npm run dev -- --port 8000    <-to run the server
 //npm run build                 <-to make the actual files we will turn in
@@ -44,6 +46,10 @@ export default {
                 ]
             }
         };
+    },
+    components: {
+        About,
+        NewIncident
     },
     methods: {
         viewMap(event) {
@@ -132,19 +138,11 @@ export default {
     </div>
     <div v-if="view === 'new_incident'">
         <!-- Replace this with your actual form: can be done here or by making a new component -->
-        <div class="grid-container">
-            <div class="grid-x grid-padding-x">
-                <h1 class="cell auto">New Incident Form</h1>
-            </div>
-        </div>
+        <NewIncident />
     </div>
     <div v-if="view === 'about'">
         <!-- Replace this with your actual about the project content: can be done here or by making a new component -->
-        <div class="grid-container">
-            <div class="grid-x grid-padding-x">
-                <h1 class="cell auto">About the Project</h1>
-            </div>
-        </div>
+        <About />
     </div>
 </template>
 
