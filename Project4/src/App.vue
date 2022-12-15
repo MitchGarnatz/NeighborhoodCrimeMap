@@ -20,6 +20,8 @@ export default {
             view: 'map',
             lookup: '',
             current_lookup_marker: null,
+            checkedIncidents: [],
+            checkedNeighborhoods: [],
             codes: [],
             neighborhoods: [],
             incidents: [],
@@ -236,6 +238,15 @@ export default {
                     
                     
                 </div>
+
+                <div>Checked Incident Types: {{ checkedIncidents }}
+                    <input type="checkbox" id="Homicide" value=100 v-model="checkedIncidents" />
+                    <label for="Homicide">Homicide</label>
+                
+                    <input type="checkbox" id="Murder" value=120 v-model="checkedIncidents" />
+                    <label for="Murder">Murder</label>
+
+                </div>
                 
                 <table class="cell small-12" style = "border:2px solid">
                     <tr style = "border:2px solid">
@@ -246,6 +257,7 @@ export default {
                         <td>Neighborhood</td>
                     </tr>
                     <tr v-for="incident in incidents">
+
                         <td>{{incident.case_number}}</td>
                         <td>{{incident.date}}</td>
                         <td>{{incident.incident}}</td>
@@ -254,7 +266,6 @@ export default {
                     </tr>
                 </table>   
             </div>
-            
         </div>
     </div>
     <div v-if="view === 'new_incident'">
