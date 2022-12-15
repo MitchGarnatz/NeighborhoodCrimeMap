@@ -11,6 +11,7 @@ export default {
         return {
             view: 'map',
             lookup: '',
+            current_lookup_marker: null,
             codes: [],
             neighborhoods: [],
             incidents: [],
@@ -54,10 +55,16 @@ export default {
     },
     methods: {
         Locate(){
+            if(this.current_marker != null){
+                this.leaflet.map.removeLayer(this.current_marker)
+            }
+            
             let url = 'https://nominatim.openstreetmap.org/search?q=' + this.lookup +
               '&format=json&limit=25&accept-language=en';
-              getJSON(url)
+              this.getJSON(url)
               .then((data)=>{
+                this.current_marker = new L.Marker([data[0].lat,data[0].lon]);
+                this.current_marker.addTo(this.leaflet.map);
                 console.log(data);
               })
             this.lookup = '';
@@ -145,17 +152,18 @@ export default {
             <div class="grid-x grid-padding-x">
 
                 <div id="leafletmap" class="cell auto"></div>
-                <template class = "cell auto">
-                    <form @submit.prevent="Locate">
-                        <input v-model="lookup">
-                        <button>Search</button>    
-                    </form>
-                </template>
                 
-
-                <div class="cell 6">
-                    <input v-model="lookup" placeholder="Summit">
+                <div class = "cell 12">
+                    
+                    <form @submit.prevent="Locate">
+                        <input v-model="lookup" placeholder="Hamline">
+                        
+                        <input class="button" type="submit" value="Submit"> 
+                    </form>
+                    
+                    
                 </div>
+                
                 <table class="cell small-12">
                         
                 </table>   
@@ -169,6 +177,8 @@ export default {
     <div v-if="view === 'about'">
         <About />
     </div>
+
+
 </template>
 
 <style>
@@ -191,3 +201,6 @@ export default {
     cursor: pointer;
 }
 </style>
+
+
+
