@@ -12,7 +12,7 @@
         <div class="grid-x grid-padding-x">
             <h1 class="cell 12">New Incident Form</h1>
 
-            <input v-model="case_number" placeholder="case number" />
+            <!--<input v-model="case_number" placeholder="case number" />-->
 
 
             <form action="">

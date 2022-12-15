@@ -10,6 +10,7 @@ export default {
     data() {
         return {
             view: 'map',
+            lookup: '',
             codes: [],
             neighborhoods: [],
             incidents: [],
@@ -52,6 +53,16 @@ export default {
         NewIncident
     },
     methods: {
+        Locate(){
+            let url = 'https://nominatim.openstreetmap.org/search?q=' + this.lookup +
+              '&format=json&limit=25&accept-language=en';
+              getJSON(url)
+              .then((data)=>{
+                console.log(data);
+              })
+            this.lookup = '';
+        }, 
+
         viewMap(event) {
             this.view = 'map';
         },
@@ -132,16 +143,30 @@ export default {
     <div v-show="view === 'map'">
         <div class="grid-container">
             <div class="grid-x grid-padding-x">
+
                 <div id="leafletmap" class="cell auto"></div>
+                <template class = "cell auto">
+                    <form @submit.prevent="Locate">
+                        <input v-model="lookup">
+                        <button>Search</button>    
+                    </form>
+                </template>
+                
+
+                <div class="cell 6">
+                    <input v-model="lookup" placeholder="Summit">
+                </div>
+                <table class="cell small-12">
+                        
+                </table>   
             </div>
+            
         </div>
     </div>
     <div v-if="view === 'new_incident'">
-        <!-- Replace this with your actual form: can be done here or by making a new component -->
         <NewIncident />
     </div>
     <div v-if="view === 'about'">
-        <!-- Replace this with your actual about the project content: can be done here or by making a new component -->
         <About />
     </div>
 </template>
