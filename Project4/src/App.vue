@@ -65,6 +65,8 @@ export default {
               .then((data)=>{
                 this.current_marker = new L.Marker([data[0].lat,data[0].lon]);
                 this.current_marker.addTo(this.leaflet.map);
+                this.leaflet.map.setView([data[0].lat, data[0].lon], 15);
+                
                 console.log(data);
               })
             this.lookup = '';
@@ -135,6 +137,33 @@ export default {
         }).catch((error) => {
             console.log('Error:', error);
         });
+        this.leaflet.map.on('dragend', ()=> {
+            console.log(this.leaflet.map.getCenter());
+            if(this.current_marker != null){
+                this.leaflet.map.removeLayer(this.current_marker)
+            }
+            let url = 'https://nominatim.openstreetmap.org/reverse?lat=' + this.leaflet.map.getCenter().lat + '&lon=' + this.leaflet.map.getCenter().lng+"&format=json";
+              this.getJSON(url)
+              .then((data)=>{
+                console.log(data);
+                this.current_marker = new L.Marker([data.lat,data.lon]);
+                this.current_marker.addTo(this.leaflet.map);
+                this.leaflet.map.setView([data.lat, data.lon]);
+                this.lookup = data.display_name;
+                console.log(data);
+              })
+              .catch((error) => {
+                console.log('Error:', error);
+            });
+        });
+
+        this.getJSON('http://localhost:8888/incidents').then((data)=>{
+            this.incidents = data;
+            console.log(data);
+        }).catch((err)=>{
+            console.log(err);
+        })
+
     }
 }
 </script>
@@ -156,16 +185,26 @@ export default {
                 <div class = "cell 12">
                     
                     <form @submit.prevent="Locate">
-                        <input v-model="lookup" placeholder="Hamline">
+                        <input v-model="lookup" placeholder="Hamline" style="width: 1000px">
                         
-                        <input class="button" type="submit" value="Submit"> 
+                        <input class="button" type="submit" value="GO"> 
                     </form>
                     
                     
                 </div>
                 
-                <table class="cell small-12">
-                        
+                <table class="cell small-12" style = "border:2px solid">
+                    <tr>
+                        <td>Case Number</td>
+                        <td>Date</td>
+                        <td>Type Of Incident</td>
+                        <td></td>
+                    </tr>
+                    <tr v-for="incident in incidents">
+                        <td>{{incident.case_number}}</td>
+                        <td>{{incident.date}}</td>
+                        <td>{{incident.incident}}</td>
+                    </tr>
                 </table>   
             </div>
             
