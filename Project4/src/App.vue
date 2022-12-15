@@ -24,7 +24,7 @@ export default {
             codes: [],
             neighborhoods: [],
             incidents: [],
-            args: [],
+            args: [], //Dont know if we will need this to be global but i figured it wouldn't hurt. Currently just stores what neighborhoods numbers to include in table.
             leaflet: {
                 map: null,
                 center: {
@@ -38,6 +38,7 @@ export default {
                     se: {lat: 44.883658, lng: -92.993787}
                 },
                 neighborhood_markers: [
+                    //Includes number so it can be used to filter
                     {location: [44.942068, -93.020521], number: 1, marker: "Conway/Battlecreek/Highwood"},
                     {location: [44.977413, -93.025156], number: 2, marker: "Greater East Side"},
                     {location: [44.931244, -93.079578], number: 3, marker: "West Side"},
@@ -64,7 +65,7 @@ export default {
         NewIncident
     },
     methods: {
-        PopulateTable(){
+        PopulateTable(){ //Makes request to server to get incidents. Checks bounds of map to see what neighborhoods to include. 
             let bounds = this.leaflet.map.getBounds();
             console.log(bounds);
             this.leaflet.neighborhood_markers.forEach(element =>{
@@ -89,14 +90,14 @@ export default {
             })
             this.args = [];
         },
-        PlaceMarkers(){
+        PlaceMarkers(){ //Places markers on all of the neighborhoods
             this.leaflet.neighborhood_markers.forEach(element =>{
             let mark = new L.Marker(element.location,{title: element.marker, clickable: true}).addTo(this.leaflet.map);
             mark.bindPopup("This is the Transamerica Pyramid").openPopup();
             
         })
         },
-        Locate(){
+        Locate(){ //Takes the center of the current map view and tries to place marker as close as possible.
             if(this.current_marker != null){
                 this.leaflet.map.removeLayer(this.current_marker)
             }
@@ -181,7 +182,7 @@ export default {
         }).catch((error) => {
             console.log('Error:', error);
         });
-        this.leaflet.map.on('dragend', ()=> {
+        this.leaflet.map.on('dragend', ()=> { //Updtaes map with center address and what neighborhoods to include in the table
             console.log(this.leaflet.map.getCenter());
             if(this.current_marker != null){
                 this.leaflet.map.removeLayer(this.current_marker)
@@ -203,7 +204,7 @@ export default {
             
         });
 
-        this.leaflet.map.on('zoomend', ()=> {
+        this.leaflet.map.on('zoomend', ()=> { //Updtaes map with center address and what neighborhoods to include in the table
             console.log(this.leaflet.map.getCenter());
             if(this.current_marker != null){
                 this.leaflet.map.removeLayer(this.current_marker)
@@ -224,7 +225,7 @@ export default {
             this.PopulateTable();
         });
 
-        this.getJSON('http://localhost:8888/neighborhoods').then((data)=>{
+        this.getJSON('http://localhost:8888/neighborhoods').then((data)=>{ //Populates neighborhoods list. Should only need to do this once.
             this.neighborhoods = data;
             console.log(data);
         }).catch((err)=>{
@@ -253,13 +254,12 @@ export default {
                     
                     <form @submit.prevent="Locate">
                         <input v-model="lookup" placeholder="Hamline" style="width: 1000px">
-                        
                         <input class="button" type="submit" value="GO"> 
                     </form>
                     
-                    
                 </div>
-                
+                <!--The table of incidents. No idea what data he wants in it this is the bare minimum. 
+                    Remove 2nd neighbohood when all done, just shows neighborhood number for now-->
                 <table class="cell small-12" style = "border:2px solid">
                     <tr style = "border:2px solid">
                         <td>Case Number</td>
