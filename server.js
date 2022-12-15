@@ -103,10 +103,11 @@ app.get('/incidents', (req, res) => {
         t.forEach(element =>{
             p.push(element);
         })
-        q = q + ' code = ?';
+        q = q + ' (code = ?';
         for(let i = 1; i < t.length; i++){
             q = q + ' OR code = ?';
         }
+        q = q + ')';
     } 
 
     if(query.hasOwnProperty('neighborhood')) {
@@ -121,10 +122,11 @@ app.get('/incidents', (req, res) => {
         t.forEach(element =>{
             p.push(element);
         })
-        q = q + ' neighborhood_number = ?';
+        q = q + ' (neighborhood_number = ?';
         for(let i = 1; i < t.length; i++){
             q = q + ' OR neighborhood_number = ?';
         }
+        q = q + ')';
     }
 
     if(query.hasOwnProperty('grid')) {
@@ -139,10 +141,11 @@ app.get('/incidents', (req, res) => {
         t.forEach(element => {
             p.push(element);
         })
-        q = q + ' police_grid = ?';
+        q = q + ' (police_grid = ?';
         for(let i = 1; i<t.length; i++) {
             q = q + ' OR police_grid = ?';
         }
+        q = q + ')';
     }
 
     if(query.hasOwnProperty('start_date')) {

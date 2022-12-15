@@ -7,12 +7,13 @@ import NewIncident from './components/NewIncident.vue';
 //npm run build                 <-to make the actual files we will turn in
 //------------------------TODO-------------------------------------------------------
 //Clamp input values if lat/long is outside of St. Paul's bounding box
-//Only show crimes that occurred in neighborhoods visible on the map
-//HINT: get lat/long coordinates for the NW and SE corners of the map to use as the min/max lat/long coordinates
-//Draw markers on the map for each neighborhood
 //Marker should have popup to show the number of crimes committed in that neighborhood
 //Incident upload and Bio stuff idk how far yall got
-//
+//Create UI controls to filter crime data - In progress by mitch
+//Style the background color of rows in the table to categorize crimes as "violent crimes" (crimes against another person),
+// "property crimes" (crimes against a person's or business' property), or "other crimes" (anything else)
+//Add a 'delete' button for each crime in the table
+//Add a marker to the map at exact crime location when selected from the table
 
 export default {
     data() {
@@ -25,6 +26,7 @@ export default {
             codes: [],
             neighborhoods: [],
             incidents: [],
+            args: [], //Dont know if we will need this to be global but i figured it wouldn't hurt. Currently just stores what neighborhoods numbers to include in table.
             leaflet: {
                 map: null,
                 center: {
@@ -38,24 +40,24 @@ export default {
                     se: {lat: 44.883658, lng: -92.993787}
                 },
                 neighborhood_markers: [
-                    {location: [44.942068, -93.020521], marker: "Conway/Battlecreek/Highwood"},
-                    //{location: [44.942068, -93.020521], marker: new L.Marker([44.942068,-93.020521],{ title: "MyLocation", clickable: true})},
-                    {location: [44.977413, -93.025156], marker: "Greater East Side"},
-                    {location: [44.931244, -93.079578], marker: "Westside"},
-                    {location: [44.956192, -93.060189], marker: "Dayton's Bluff"},
-                    {location: [44.978883, -93.068163], marker: "Payne/Phalen"},
-                    {location: [44.975766, -93.113887], marker: "North End"},
-                    {location: [44.959639, -93.121271], marker: "Thomas/Dale(Frogtown)"},
-                    {location: [44.947700, -93.128505], marker: "Summit/University"},
-                    {location: [44.930276, -93.119911], marker: "West Seventh"},
-                    {location: [44.982752, -93.147910], marker: "Como"},
-                    {location: [44.963631, -93.167548], marker: null},
-                    {location: [44.973971, -93.197965], marker: null},
-                    {location: [44.949043, -93.178261], marker: null},
-                    {location: [44.934848, -93.176736], marker: null},
-                    {location: [44.913106, -93.170779], marker: null},
-                    {location: [44.937705, -93.136997], marker: null},
-                    {location: [44.949203, -93.093739], marker: null}
+                    //Includes number so it can be used to filter
+                    {location: [44.942068, -93.020521], number: 1, marker: "Conway/Battlecreek/Highwood"},
+                    {location: [44.977413, -93.025156], number: 2, marker: "Greater East Side"},
+                    {location: [44.931244, -93.079578], number: 3, marker: "West Side"},
+                    {location: [44.956192, -93.060189], number: 4, marker: "Dayton's Bluff"},
+                    {location: [44.978883, -93.068163], number: 5, marker: "Payne/Phalen"},
+                    {location: [44.975766, -93.113887], number: 6, marker: "North End"},
+                    {location: [44.959639, -93.121271], number: 7, marker: "Thomas/Dale(Frogtown)"},
+                    {location: [44.947700, -93.128505], number: 8, marker: "Summit/University"},
+                    {location: [44.930276, -93.119911], number: 9, marker: "West Seventh"},
+                    {location: [44.982752, -93.147910], number: 10, marker: "Como"},
+                    {location: [44.963631, -93.167548], number: 11, marker: "Hamline/Midway"},
+                    {location: [44.973971, -93.197965], number: 12, marker: "St. Anthony"},
+                    {location: [44.949043, -93.178261], number: 13, marker: "Union Park"},
+                    {location: [44.934848, -93.176736], number: 14, marker: "Macalester-Groveland"},
+                    {location: [44.913106, -93.170779], number: 15, marker: "Highland"},
+                    {location: [44.937705, -93.136997], number: 16, marker: "Summit Hill"},
+                    {location: [44.949203, -93.093739], number: 17, marker: "Capitol River"}
                 ]
             }
         };
@@ -65,7 +67,39 @@ export default {
         NewIncident
     },
     methods: {
-        Locate(){
+        PopulateTable(){ //Makes request to server to get incidents. Checks bounds of map to see what neighborhoods to include. 
+            let bounds = this.leaflet.map.getBounds();
+            console.log(bounds);
+            this.leaflet.neighborhood_markers.forEach(element =>{
+                if(element.location[0] > bounds._southWest.lat && element.location[0] < bounds._northEast.lat){
+                    if(element.location[1] > bounds._southWest.lng && element.location[1] < bounds._northEast.lng){
+                        this.args.push(element.number);
+                    }
+                }
+            })
+            let url = 'http://localhost:8888/incidents?';
+            if (this.args != []){
+                url = url + 'neighborhood='
+                this.args.forEach(element=>{
+                    url = url + element + ',';
+                })
+            }
+            this.getJSON(url).then((data)=>{
+                this.incidents = data;
+                console.log(data);
+            }).catch((err)=>{
+                console.log(err);
+            })
+            this.args = [];
+        },
+        PlaceMarkers(){ //Places markers on all of the neighborhoods
+            this.leaflet.neighborhood_markers.forEach(element =>{
+            let mark = new L.Marker(element.location,{title: element.marker, clickable: true}).addTo(this.leaflet.map);
+            mark.bindPopup("This is the Transamerica Pyramid").openPopup();
+            
+        })
+        },
+        Locate(){ //Takes the center of the current map view and tries to place marker as close as possible.
             if(this.current_marker != null){
                 this.leaflet.map.removeLayer(this.current_marker)
             }
@@ -137,13 +171,7 @@ export default {
         }).addTo(this.leaflet.map);
         this.leaflet.map.setMaxBounds([[44.883658, -93.217977], [45.008206, -92.993787]]);
         
-        
-        
-        let mark = new L.Marker([44.982752, -93.147910]);
-        mark.addTo(this.leaflet.map)
-
-
-
+        this.PlaceMarkers();
 
         let district_boundary = new L.geoJson();
         district_boundary.addTo(this.leaflet.map);
@@ -156,7 +184,7 @@ export default {
         }).catch((error) => {
             console.log('Error:', error);
         });
-        this.leaflet.map.on('dragend', ()=> {
+        this.leaflet.map.on('dragend', ()=> { //Updtaes map with center address and what neighborhoods to include in the table
             console.log(this.leaflet.map.getCenter());
             if(this.current_marker != null){
                 this.leaflet.map.removeLayer(this.current_marker)
@@ -174,9 +202,11 @@ export default {
               .catch((error) => {
                 console.log('Error:', error);
             });
+            this.PopulateTable();
+            
         });
 
-        this.leaflet.map.on('zoomend', ()=> {
+        this.leaflet.map.on('zoomend', ()=> { //Updtaes map with center address and what neighborhoods to include in the table
             console.log(this.leaflet.map.getCenter());
             if(this.current_marker != null){
                 this.leaflet.map.removeLayer(this.current_marker)
@@ -194,22 +224,16 @@ export default {
               .catch((error) => {
                 console.log('Error:', error);
             });
+            this.PopulateTable();
         });
 
-        this.getJSON('http://localhost:8888/incidents').then((data)=>{
-            this.incidents = data;
-            console.log(data);
-        }).catch((err)=>{
-            console.log(err);
-        })
-
-        this.getJSON('http://localhost:8888/neighborhoods').then((data)=>{
+        this.getJSON('http://localhost:8888/neighborhoods').then((data)=>{ //Populates neighborhoods list. Should only need to do this once.
             this.neighborhoods = data;
             console.log(data);
         }).catch((err)=>{
             console.log(err);
         })
-
+        this.PopulateTable();
     }
 }
 </script>
@@ -232,12 +256,11 @@ export default {
                     
                     <form @submit.prevent="Locate">
                         <input v-model="lookup" placeholder="Hamline" style="width: 1000px">
-                        
                         <input class="button" type="submit" value="GO"> 
                     </form>
                     
-                    
                 </div>
+<<<<<<< HEAD
 
                 <div>Checked Incident Types: {{ checkedIncidents }}
                     <input type="checkbox" id="Homicide" value=100 v-model="checkedIncidents" />
@@ -248,6 +271,10 @@ export default {
 
                 </div>
                 
+=======
+                <!--The table of incidents. No idea what data he wants in it this is the bare minimum. 
+                    Remove 2nd neighbohood when all done, just shows neighborhood number for now-->
+>>>>>>> 993f82e35404d4580265fe5d358ac7098d1923c2
                 <table class="cell small-12" style = "border:2px solid">
                     <tr style = "border:2px solid">
                         <td>Case Number</td>
