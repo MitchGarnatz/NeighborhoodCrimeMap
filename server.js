@@ -169,7 +169,7 @@ app.get('/incidents', (req, res) => {
         q = q + ' date(date_time) < ?';
     }
 
-    q = q + ' ORDER BY date_time';
+    q = q + ' ORDER BY date_time DESC';
 
     if(query.hasOwnProperty('limit')) {
         q = q + ' LIMIT ?';
