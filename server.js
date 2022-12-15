@@ -5,14 +5,20 @@ let path = require('path');
 // NPM modules
 let express = require('express');
 let sqlite3 = require('sqlite3');
+let cors = require('cors');
+
 
 
 let db_filename = path.join(__dirname, 'db', 'stpaul_crime.sqlite3');
 
 let app = express();
-let port = 8000;
+let port = 8888;
 
 app.use(express.json());
+
+app.use(cors({
+    origin: 'http://127.0.0.1:8000'
+}));
 
 // Open SQLite3 database (in read-write mode)
 let db = new sqlite3.Database(db_filename, sqlite3.OPEN_READWRITE, (err) => {
