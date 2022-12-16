@@ -21,11 +21,43 @@ export default {
             view: 'map',
             lookup: '',
             current_lookup_marker: null,
-            checkedIncidents: [],
-            checkedNeighborhoods: [],
-            narcotic: true,
-            property: true,
-            violent: true,
+            narcotic: false,
+            property: false,
+            violent: false,
+            north: false,
+            east: false,
+            central: false,
+            west: false,
+
+            selected1: 'select a year',
+            options1: [
+                { text: 'Year', value: 'select a year'},
+                { text: '2014', value: '2014' },
+                { text: '2015', value: '2015' },
+                { text: '2016', value: '2016' },
+                { text: '2015', value: '2017' },
+                { text: '2016', value: '2018' }
+            ],
+
+            selected2: 'select a month',
+            options2: [
+                { text: 'Month', value: 'select a month'},
+                { text: '2014', value: '2014' },
+                { text: '2015', value: '2015' },
+                { text: '2016', value: '2016' },
+                { text: '2015', value: '2017' },
+                { text: '2016', value: '2018' }
+            ],
+
+            selected3: 'select a day',
+            options3: [
+                { text: 'Day', value: 'select a day'},
+                { text: '2014', value: '2014' },
+                { text: '2015', value: '2015' },
+                { text: '2016', value: '2016' },
+                { text: '2015', value: '2017' },
+                { text: '2016', value: '2018' }
+            ],
             codes: [],
             neighborhoods: [],
             incidents: [],
@@ -71,15 +103,34 @@ export default {
         NewIncident
     },
     methods: {
+
         FilterList(){
             let newList = [];
-            this.incidents.forEach(element => {
-                if(this.violent && element.code > 99 && element.code < 454){
-                    newList.push(element);
-                }
-            })
-
-
+            if (this.violent || this.property || this.narcotic || this.east || this.west || this.central) {
+                this.incidents.forEach(element => {
+                    if(this.violent && element.code > 99 && element.code < 454){
+                        newList.push(element);
+                    }
+                    else if (this.property && element.code > 499 && element.code < 1437){
+                        newList.push(element);
+                    }
+                    else if (this.narcotic && element.code > 1799 && element.code < 9987){
+                        newList.push(element);
+                    }
+                    else if(this.east && element.neighborhood_number > 0 && element.neighborhood_number < 6){
+                        newList.push(element);
+                    }
+                    else if (this.central && element.neighborhood_number > 5 && element.neighborhood_number < 10 || this.central && element.neighborhood_number === 17) {
+                        newList.push(element);
+                    }
+                    else if (this.west && element.neighborhood_number > 9 && element.neighborhood_number < 17){
+                        newList.push(element);
+                    }
+                })
+            }
+            else {
+                newList = this.incidents;
+            }
             return newList;
         },
         PopulateTable(){ //Makes request to server to get incidents. Checks bounds of map to see what neighborhoods to include. 
@@ -282,16 +333,47 @@ export default {
                     
                 </div>
 
-                <div>Checked Incident Types: {{ checkedIncidents }}
-                    <input type="checkbox" id="Violent Crimes" value=true v-model="violent" />
-                    
+                <div class = "cell 12">
+                    <input type="checkbox" id="Violent Crimes" value=false v-model="violent" />
                     <label for="Violent Crimes">Violent Crimes</label>
                     {{violent}}
-                
-                    <input type="checkbox" id="Murder" value=120 v-model="checkedIncidents" />
-                    <label for="Murder">Murder</label>
-
+                    <input type="checkbox" id="Property Crimes" value=false v-model="property" />
+                    <label for="Property Crimes">Property Crimes</label>
+                    {{property}}
+                    <input type="checkbox" id="Narcotics Crimes" value=false v-model="narcotic" />
+                    <label for="Narcotics Crimes">Narcotics Crimes</label>
+                    {{narcotic}}
                 </div>
+
+                <div class = "cell 12">
+                    <input type="checkbox" id="East" value=false v-model="east" />
+                    <label for="East">East</label>
+                    {{east}}
+                    <input type="checkbox" id="Central" value=false v-model="central" />
+                    <label for="Central">Central</label>
+                    {{central}}
+                    <input type="checkbox" id="West" value=false v-model="west" />
+                    <label for="West">West</label>
+                    {{west}}
+                </div>
+                 
+                <select v-model="selected1">
+                    <option v-for="option in options1" :value="option.value">
+                        {{ option.text }}
+                    </option>
+                </select>
+                <select v-model="selected2">
+                    <option v-for="option in options2" :value="option.value">
+                        {{ option.text }}
+                    </option>
+                </select>
+                <select v-model="selected3">
+                    <option v-for="option in options3" :value="option.value">
+                        {{ option.text }}
+                    </option>
+                </select>
+
+	            <div>Selected: {{ selected }}</div>
                 
                 <!--The table of incidents. No idea what data he wants in it this is the bare minimum. 
                     Remove 2nd neighbohood when all done, just shows neighborhood number for now-->
@@ -306,7 +388,6 @@ export default {
                         <td>Code</td>
                     </tr>
                     <tr v-for="incident in FilterList()">
-
                         <td>{{incident.case_number}}</td>
                         <td>{{incident.date}}</td>
                         <td>{{incident.incident}}</td>
