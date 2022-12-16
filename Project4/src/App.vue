@@ -270,10 +270,9 @@ export default {
 
                 </div>
                 
-=======
                 <!--The table of incidents. No idea what data he wants in it this is the bare minimum. 
                     Remove 2nd neighbohood when all done, just shows neighborhood number for now-->
->>>>>>> 993f82e35404d4580265fe5d358ac7098d1923c2
+
                 <table class="cell small-12" style = "border:2px solid">
                     <tr style = "border:2px solid">
                         <td>Case Number</td>
