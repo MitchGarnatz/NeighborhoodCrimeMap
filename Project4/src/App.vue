@@ -30,6 +30,7 @@ export default {
             neighborhoods: [],
             incidents: [],
             args: [], //Dont know if we will need this to be global but i figured it wouldn't hurt. Currently just stores what neighborhoods numbers to include in table.
+            NewIncidentData: null,
             leaflet: {
                 map: null,
                 center: {
@@ -174,6 +175,12 @@ export default {
                     }
                 });
             });
+        },
+
+        onSubmit(submitData) {
+            // this method will store the new incident data from the NewIncident child component for use in uploadJSON
+            this.NewIncidentData = submitData;
+            alert(JSON.stringify(this.NewIncidentData));
         }
     },
     mounted() {
@@ -312,7 +319,7 @@ export default {
         </div>
     </div>
     <div v-if="view === 'new_incident'">
-        <NewIncident />
+        <NewIncident @submitted="onSubmit"/>
     </div>
     <div v-if="view === 'about'">
         <About />
