@@ -28,6 +28,9 @@ export default {
             east: false,
             central: false,
             west: false,
+            start_date: "2014-08-14",
+            end_date: "2022-05-31",
+            max_result: 1000,
 
             selected1: 'select a year',
             options1: [
@@ -143,13 +146,15 @@ export default {
                     }
                 }
             })
-            let url = 'http://localhost:8888/incidents?';
+            console.log(this.start_date);
+            let url = 'http://localhost:8888/incidents?start_date='+this.start_date+"&end_date="+this.end_date+"&limit="+this.max_result;
             if (this.args != []){
-                url = url + 'neighborhood='
+                url = url + '&neighborhood='
                 this.args.forEach(element=>{
                     url = url + element + ',';
                 })
             }
+            console.log(url);
             this.getJSON(url).then((data)=>{
                 this.incidents = data;
                 console.log(data);
@@ -334,13 +339,13 @@ export default {
                 </div>
 
                 <div class = "cell 12">
-                    <input type="checkbox" id="Violent Crimes" value=false v-model="violent" />
+                    <input type="checkbox" id="Violent Crimes" v-model="violent" />
                     <label for="Violent Crimes">Violent Crimes</label>
                     {{violent}}
-                    <input type="checkbox" id="Property Crimes" value=false v-model="property" />
+                    <input type="checkbox" id="Property Crimes" v-model="property" />
                     <label for="Property Crimes">Property Crimes</label>
                     {{property}}
-                    <input type="checkbox" id="Narcotics Crimes" value=false v-model="narcotic" />
+                    <input type="checkbox" id="Narcotics Crimes" v-model="narcotic" />
                     <label for="Narcotics Crimes">Narcotics Crimes</label>
                     {{narcotic}}
                 </div>
@@ -356,8 +361,13 @@ export default {
                     <label for="West">West</label>
                     {{west}}
                 </div>
-                 
-                <select v-model="selected1">
+                
+                    <input v-model="max_result" placeholder="Max Number of Results">
+                    <input class="cell small-4" type="date" name="Start-Date" v-model="start_date" min="2014-08-14" max="2022-05-31">
+                    <input class="cell small-4" type="date" name="End-Date" v-model="end_date" min="2014-08-14" max="2022-05-31">
+                    <button class="button cell small-4" @click="PopulateTable">Apply Filters</button>
+                
+                <!--<select v-model="selected1">
                     <option v-for="option in options1" :value="option.value">
                         {{ option.text }}
                     </option>
@@ -371,7 +381,7 @@ export default {
                     <option v-for="option in options3" :value="option.value">
                         {{ option.text }}
                     </option>
-                </select>
+                </select>-->
 
 	            <div>Selected: {{ selected }}</div>
                 

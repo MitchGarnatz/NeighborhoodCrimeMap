@@ -157,7 +157,7 @@ app.get('/incidents', (req, res) => {
         }
         let t = query.start_date;
         p.push(t);
-        q = q + ' date(date_time) > ?';
+        q = q + ' date(date_time) >= ?';
     }
 
     if(query.hasOwnProperty('end_date')) {
@@ -169,7 +169,7 @@ app.get('/incidents', (req, res) => {
         }
         let t = query.end_date;
         p.push(t);
-        q = q + ' date(date_time) < ?';
+        q = q + ' date(date_time) <= ?';
     }
 
     q = q + ' ORDER BY date_time DESC';
