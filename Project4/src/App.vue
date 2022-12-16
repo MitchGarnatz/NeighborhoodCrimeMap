@@ -80,23 +80,23 @@ export default {
                 },
                 neighborhood_markers: [
                     //Includes number so it can be used to filter
-                    {location: [44.942068, -93.020521], number: 1, marker: "Conway/Battlecreek/Highwood"},
-                    {location: [44.977413, -93.025156], number: 2, marker: "Greater East Side"},
-                    {location: [44.931244, -93.079578], number: 3, marker: "West Side"},
-                    {location: [44.956192, -93.060189], number: 4, marker: "Dayton's Bluff"},
-                    {location: [44.978883, -93.068163], number: 5, marker: "Payne/Phalen"},
-                    {location: [44.975766, -93.113887], number: 6, marker: "North End"},
-                    {location: [44.959639, -93.121271], number: 7, marker: "Thomas/Dale(Frogtown)"},
-                    {location: [44.947700, -93.128505], number: 8, marker: "Summit/University"},
-                    {location: [44.930276, -93.119911], number: 9, marker: "West Seventh"},
-                    {location: [44.982752, -93.147910], number: 10, marker: "Como"},
-                    {location: [44.963631, -93.167548], number: 11, marker: "Hamline/Midway"},
-                    {location: [44.973971, -93.197965], number: 12, marker: "St. Anthony"},
-                    {location: [44.949043, -93.178261], number: 13, marker: "Union Park"},
-                    {location: [44.934848, -93.176736], number: 14, marker: "Macalester-Groveland"},
-                    {location: [44.913106, -93.170779], number: 15, marker: "Highland"},
-                    {location: [44.937705, -93.136997], number: 16, marker: "Summit Hill"},
-                    {location: [44.949203, -93.093739], number: 17, marker: "Capitol River"}
+                    {location: [44.942068, -93.020521], include: true, number: 1, marker: "Conway/Battlecreek/Highwood"},
+                    {location: [44.977413, -93.025156], include: true, number: 2, marker: "Greater East Side"},
+                    {location: [44.931244, -93.079578], include: true, number: 3, marker: "West Side"},
+                    {location: [44.956192, -93.060189], include: true, number: 4, marker: "Dayton's Bluff"},
+                    {location: [44.978883, -93.068163], include: true, number: 5, marker: "Payne/Phalen"},
+                    {location: [44.975766, -93.113887], include: true, number: 6, marker: "North End"},
+                    {location: [44.959639, -93.121271], include: true, number: 7, marker: "Thomas/Dale(Frogtown)"},
+                    {location: [44.947700, -93.128505], include: true, number: 8, marker: "Summit/University"},
+                    {location: [44.930276, -93.119911], include: true, number: 9, marker: "West Seventh"},
+                    {location: [44.982752, -93.147910], include: true, number: 10, marker: "Como"},
+                    {location: [44.963631, -93.167548], include: true, number: 11, marker: "Hamline/Midway"},
+                    {location: [44.973971, -93.197965], include: true, number: 12, marker: "St. Anthony"},
+                    {location: [44.949043, -93.178261], include: true, number: 13, marker: "Union Park"},
+                    {location: [44.934848, -93.176736], include: true, number: 14, marker: "Macalester-Groveland"},
+                    {location: [44.913106, -93.170779], include: true, number: 15, marker: "Highland"},
+                    {location: [44.937705, -93.136997], include: true, number: 16, marker: "Summit Hill"},
+                    {location: [44.949203, -93.093739], include: true, number: 17, marker: "Capitol River"}
                 ]
             }
         };
@@ -136,24 +136,28 @@ export default {
             }
             return newList;
         },
-        PopulateTable(){ //Makes request to server to get incidents. Checks bounds of map to see what neighborhoods to include. 
+        CheckHoodBounds(){
             let bounds = this.leaflet.map.getBounds();
-            console.log(bounds);
             this.leaflet.neighborhood_markers.forEach(element =>{
-                if(element.location[0] > bounds._southWest.lat && element.location[0] < bounds._northEast.lat){
-                    if(element.location[1] > bounds._southWest.lng && element.location[1] < bounds._northEast.lng){
-                        this.args.push(element.number);
+                if( element.location[0] > bounds._southWest.lat &&
+                    element.location[0] < bounds._northEast.lat &&
+                    element.location[1] > bounds._southWest.lng &&
+                    element.location[1] < bounds._northEast.lng){
+                        element.include = true;
+                    } else {
+                        element.include = false;
                     }
-                }
             })
+        },
+        PopulateTable(){ //Makes request to server to get incidents. Checks bounds of map to see what neighborhoods to include. 
+            
             console.log(this.start_date);
             let url = 'http://localhost:8888/incidents?start_date='+this.start_date+"&end_date="+this.end_date+"&limit="+this.max_result;
-            if (this.args != []){
                 url = url + '&neighborhood='
-                this.args.forEach(element=>{
-                    url = url + element + ',';
+                this.leaflet.neighborhood_markers.forEach(element=>{
+                    if(element.include){url = url + element + ',';}
                 })
-            }
+            
             console.log(url);
             this.getJSON(url).then((data)=>{
                 this.incidents = data;
@@ -279,6 +283,7 @@ export default {
               .catch((error) => {
                 console.log('Error:', error);
             });
+            this.CheckHoodBounds();
             this.PopulateTable();
             
         });
@@ -301,6 +306,7 @@ export default {
               .catch((error) => {
                 console.log('Error:', error);
             });
+            this.CheckHoodBounds();
             this.PopulateTable();
         });
 
@@ -362,11 +368,19 @@ export default {
                     {{west}}
                 </div>
                 
-                    <input v-model="max_result" placeholder="Max Number of Results">
-                    <input class="cell small-4" type="date" name="Start-Date" v-model="start_date" min="2014-08-14" max="2022-05-31">
-                    <input class="cell small-4" type="date" name="End-Date" v-model="end_date" min="2014-08-14" max="2022-05-31">
-                    <button class="button cell small-4" @click="PopulateTable">Apply Filters</button>
-                
+                    <input class="cell small-3" v-model="max_result" placeholder="Max Number of Results">
+                    <input class="cell small-3" type="date" name="Start-Date" v-model="start_date" min="2014-08-14" max="2022-05-31">
+                    <input class="cell small-3" type="date" name="End-Date" v-model="end_date" min="2014-08-14" max="2022-05-31">
+                    <button class="button cell small-3" @click="PopulateTable">Apply Filters</button>
+                    
+                    <ul style="list-style: none">
+                        <li  class="cell small-3" v-for="neighborhood in leaflet.neighborhood_markers" >
+                            <input type="checkbox" v-model="neighborhood.include">
+                            {{neighborhood.marker}}
+                        </li>
+                    </ul>
+                    
+
                 <!--<select v-model="selected1">
                     <option v-for="option in options1" :value="option.value">
                         {{ option.text }}
@@ -381,9 +395,9 @@ export default {
                     <option v-for="option in options3" :value="option.value">
                         {{ option.text }}
                     </option>
-                </select>-->
+                </select>
 
-	            <div>Selected: {{ selected }}</div>
+	            <div>Selected: {{ selected }}</div> -->
                 
                 <!--The table of incidents. No idea what data he wants in it this is the bare minimum. 
                     Remove 2nd neighbohood when all done, just shows neighborhood number for now-->
@@ -437,6 +451,9 @@ export default {
     border: solid 1px white;
     text-align: center;
     cursor: pointer;
+}
+ul li{
+    display: inline;
 }
 </style>
 
