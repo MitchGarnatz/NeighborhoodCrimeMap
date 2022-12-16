@@ -23,6 +23,9 @@ export default {
             current_lookup_marker: null,
             checkedIncidents: [],
             checkedNeighborhoods: [],
+            narcotic: true,
+            property: true,
+            violent: true,
             codes: [],
             neighborhoods: [],
             incidents: [],
@@ -67,6 +70,17 @@ export default {
         NewIncident
     },
     methods: {
+        FilterList(){
+            let newList = [];
+            this.incidents.forEach(element => {
+                if(this.violent && element.code > 99 && element.code < 454){
+                    newList.push(element);
+                }
+            })
+
+
+            return newList;
+        },
         PopulateTable(){ //Makes request to server to get incidents. Checks bounds of map to see what neighborhoods to include. 
             let bounds = this.leaflet.map.getBounds();
             console.log(bounds);
@@ -262,8 +276,10 @@ export default {
                 </div>
 
                 <div>Checked Incident Types: {{ checkedIncidents }}
-                    <input type="checkbox" id="Homicide" value=100 v-model="checkedIncidents" />
-                    <label for="Homicide">Homicide</label>
+                    <input type="checkbox" id="Violent Crimes" value=true v-model="violent" />
+                    
+                    <label for="Violent Crimes">Violent Crimes</label>
+                    {{violent}}
                 
                     <input type="checkbox" id="Murder" value=120 v-model="checkedIncidents" />
                     <label for="Murder">Murder</label>
@@ -280,14 +296,16 @@ export default {
                         <td>Type Of Incident</td>
                         <td>Neighborhood</td>
                         <td>Neighborhood</td>
+                        <td>Code</td>
                     </tr>
-                    <tr v-for="incident in incidents">
+                    <tr v-for="incident in FilterList()">
 
                         <td>{{incident.case_number}}</td>
                         <td>{{incident.date}}</td>
                         <td>{{incident.incident}}</td>
                         <td>{{neighborhoods[incident.neighborhood_number-1].neighborhood_name}}</td>
                         <td>{{incident.neighborhood_number}}</td>
+                        <td>{{incident.code}}</td>
                     </tr>
                 </table>   
             </div>
