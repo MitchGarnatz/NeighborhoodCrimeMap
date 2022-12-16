@@ -5,11 +5,12 @@
                 case_number: "",
                 date: "",
                 time: "",
-                code: "",
+                code: null,
                 incident: "",
-                police_grid: "",
-                neighborhood_number: "",
-                block: ""
+                police_grid: null,
+                neighborhood_number: null,
+                block: "",
+                failed: false
             }
         },
         methods: {
@@ -23,8 +24,22 @@
                     "police_grid": this.police_grid,
                     "neighborhood_number": this.neighborhood_number,
                     "block": this.block
+                };
+                if(this.validate(incident_data)) {
+                    this.$emit('submitted', incident_data)           
+                };
+             },
+
+             validate(data) {
+                for(var key in data) {
+                    console.log('key: ',key)
+                    if(data[key]===""||data[key]===null) {
+                        
+                        this.failed = true;
+                        return false;
+                    }
                 }
-                this.$emit('submitted', incident_data)           
+                return true;
              }
         }
     }
@@ -35,6 +50,7 @@
     <div class="grid-container">
         <div class="grid-x grid-padding-x">
             <h1 class="cell 12" style="background-color:aqua;">New Incident Form</h1>
+            <h4 class="cell 12" v-if="this.failed">Incomplete form! Please ensure that all fields are filled out and submit again.</h4>
 
 
 
@@ -67,40 +83,6 @@
                     <input class="submit" type="submit" value="Submit">
                 </form>
             </div>
-
-            <!--
-
-            
-
-            <form action="">
-                <div class="cell 6">
-                    <label for="case_no">Case Number</label>
-                    <input type="text" placeholder="XXX" name="case_no">
-                </div>
-                <div class="cell 6">
-                    <label for="date">Date</label>
-                    <input type="text" placeholder="MM-DD-YYYY" name="date">
-                </div>    
-                <label for="time">Time</label>
-                <input type="text" placeholder="HH:MM" name="time">
-                
-                <label for="code">SPPD Code</label>
-                <input type="text" placeholder="100" name="code">
-                <br>
-                <label for="incident">Incident</label>
-                <input type="text" placeholder="" name="incident">
-                
-                <label for="police_grid">Police Grid</label>
-                <input type="text" placeholder="" name="police_grid">
-                <br>
-                <label for="neighborhood_number">Neighborhood Number</label>
-                <input type="text" placeholder="" name="neighborhoood_number">
-                
-                <label for="block">Block</label>
-                <input type="text" placeholder="" name="block">
-                <input type="submit" value="Submit">
-            </form>
-        -->
         </div>
     </div>
 </template>
