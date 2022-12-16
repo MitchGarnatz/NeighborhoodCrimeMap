@@ -282,6 +282,9 @@ app.delete('/remove-incident', (req, res) => {
             })
         }
     })
+    .catch(err=>{
+        console.log(err);
+    })
 });
 
 

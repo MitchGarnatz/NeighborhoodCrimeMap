@@ -155,7 +155,7 @@ export default {
             let url = 'http://localhost:8888/incidents?start_date='+this.start_date+"&end_date="+this.end_date+"&limit="+this.max_result;
                 url = url + '&neighborhood='
                 this.leaflet.neighborhood_markers.forEach(element=>{
-                    if(element.include){url = url + element + ',';}
+                    if(element.include){url = url + element.number + ',';}
                 })
             
             console.log(url);
@@ -190,8 +190,11 @@ export default {
                 console.log(data);
               })
             this.lookup = '';
-        }, 
-
+        },
+        DeleteInc(inc){
+            console.log("DELETE: "+'http://localhost:8888/remove-incident?case_number=' + inc);
+            this.uploadJSON('DELETE','http://localhost:8888/remove-incident?case_number=' + inc);
+        },
         viewMap(event) {
             this.view = 'map';
         },
@@ -312,11 +315,12 @@ export default {
 
         this.getJSON('http://localhost:8888/neighborhoods').then((data)=>{ //Populates neighborhoods list. Should only need to do this once.
             this.neighborhoods = data;
+            this.PopulateTable();
             console.log(data);
         }).catch((err)=>{
             console.log(err);
         })
-        this.PopulateTable();
+        
     }
 }
 </script>
@@ -344,62 +348,62 @@ export default {
                     
                 </div>
 
-                <div class = "cell 12">
+                <div class = "cell small-12">
                     <input type="checkbox" id="Violent Crimes" v-model="violent" />
                     <label for="Violent Crimes">Violent Crimes</label>
-                    {{violent}}
                     <input type="checkbox" id="Property Crimes" v-model="property" />
                     <label for="Property Crimes">Property Crimes</label>
-                    {{property}}
                     <input type="checkbox" id="Narcotics Crimes" v-model="narcotic" />
                     <label for="Narcotics Crimes">Narcotics Crimes</label>
-                    {{narcotic}}
                 </div>
 
-                <div class = "cell 12">
-                    <input type="checkbox" id="East" value=false v-model="east" />
-                    <label for="East">East</label>
-                    {{east}}
-                    <input type="checkbox" id="Central" value=false v-model="central" />
-                    <label for="Central">Central</label>
-                    {{central}}
-                    <input type="checkbox" id="West" value=false v-model="west" />
-                    <label for="West">West</label>
-                    {{west}}
-                </div>
                 
-                    <input class="cell small-3" v-model="max_result" placeholder="Max Number of Results">
-                    <input class="cell small-3" type="date" name="Start-Date" v-model="start_date" min="2014-08-14" max="2022-05-31">
-                    <input class="cell small-3" type="date" name="End-Date" v-model="end_date" min="2014-08-14" max="2022-05-31">
-                    <button class="button cell small-3" @click="PopulateTable">Apply Filters</button>
+                <input class="cell small-3" v-model="max_result" placeholder="Max Number of Results">
+                <input class="cell small-3" type="date" name="Start-Date" v-model="start_date" min="2014-08-14" max="2022-05-31">
+                <input class="cell small-3" type="date" name="End-Date" v-model="end_date" min="2014-08-14" max="2022-05-31">
+                <button class="button cell small-3" @click="PopulateTable">Apply Filters</button>
                     
-                    <ul style="list-style: none">
-                        <li  class="cell small-3" v-for="neighborhood in leaflet.neighborhood_markers" >
-                            <input type="checkbox" v-model="neighborhood.include">
-                            {{neighborhood.marker}}
-                        </li>
-                    </ul>
+                    <!--Creates a box for every neighborhood-->
+                <ul style="list-style: none">
+                    <li  class="cell small-3" v-for="neighborhood in leaflet.neighborhood_markers" >
+                        <input type="checkbox" v-model="neighborhood.include">
+                        {{neighborhood.marker}}
+                    </li>
+                </ul>
                     
 
-                <!--<select v-model="selected1">
-                    <option v-for="option in options1" :value="option.value">
-                        {{ option.text }}
-                    </option>
-                </select>
-                <select v-model="selected2">
-                    <option v-for="option in options2" :value="option.value">
-                        {{ option.text }}
-                    </option>
-                </select>
-                <select v-model="selected3">
-                    <option v-for="option in options3" :value="option.value">
-                        {{ option.text }}
-                    </option>
-                </select>
+                    <!--<select v-model="selected1">
+                        <option v-for="option in options1" :value="option.value">
+                            {{ option.text }}
+                        </option>
+                    </select>
+                    <select v-model="selected2">
+                        <option v-for="option in options2" :value="option.value">
+                            {{ option.text }}
+                        </option>
+                    </select>
+                    <select v-model="selected3">
+                        <option v-for="option in options3" :value="option.value">
+                            {{ option.text }}
+                        </option>
+                    </select>
 
-	            <div>Selected: {{ selected }}</div> -->
+	                <div>Selected: {{ selected }}</div>
+            
+                    <div class = "cell 12">
+                        <input type="checkbox" id="East" value=false v-model="east" />
+                        <label for="East">East</label>
+                        {{east}}
+                        <input type="checkbox" id="Central" value=false v-model="central" />
+                        <label for="Central">Central</label>
+                        {{central}}
+                        <input type="checkbox" id="West" value=false v-model="west" />
+                        <label for="West">West</label>
+                        {{west}}
+                    </div>
+                    -->
                 
-                <!--The table of incidents. No idea what data he wants in it this is the bare minimum. 
+                    <!--The table of incidents. No idea what data he wants in it this is the bare minimum. 
                     Remove 2nd neighbohood when all done, just shows neighborhood number for now-->
 
                 <table class="cell small-12" style = "border:2px solid">
@@ -410,6 +414,7 @@ export default {
                         <td>Neighborhood</td>
                         <td>Neighborhood</td>
                         <td>Code</td>
+                        <td>Delete</td>
                     </tr>
                     <tr v-for="incident in FilterList()">
                         <td>{{incident.case_number}}</td>
@@ -418,6 +423,7 @@ export default {
                         <td>{{neighborhoods[incident.neighborhood_number-1].neighborhood_name}}</td>
                         <td>{{incident.neighborhood_number}}</td>
                         <td>{{incident.code}}</td>
+                        <td><button class="button" @click="DeleteInc(incident.case_number)">DELETE</button></td>
                     </tr>
                 </table>   
             </div>
