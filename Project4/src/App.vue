@@ -7,9 +7,7 @@ import NewIncident from './components/NewIncident.vue';
 //npm run build                 <-to make the actual files we will turn in
 //------------------------TODO-------------------------------------------------------
 //Clamp input values if lat/long is outside of St. Paul's bounding box
-//Marker should have popup to show the number of crimes committed in that neighborhood
 //Incident upload and Bio stuff idk how far yall got
-//Create UI controls to filter crime data - In progress by mitch
 //Style the background color of rows in the table to categorize crimes as "violent crimes" (crimes against another person),
 // "property crimes" (crimes against a person's or business' property), or "other crimes" (anything else)
 //Add a 'delete' button for each crime in the table
@@ -27,6 +25,8 @@ export default {
             start_date: "2014-08-14",
             end_date: "2022-05-31",
             max_result: 1000,
+            currentHoodMarkers: null,
+            greenIcon: null,
             codes: [],
             neighborhoods: [],
             neighborhood_stats: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -118,7 +118,8 @@ export default {
                 })
             
             console.log("API GET request:", url);
-            this.getJSON(url).then((data)=>{
+            this.getJSON(url)
+            .then((data)=>{
                 this.incidents = data;
                 this.neighborhood_stats = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
                 data.forEach(element=>{
@@ -133,23 +134,37 @@ export default {
             this.args = [];
         },
         PlaceMarkers(){ //Places markers on all of the neighborhoods
+            let labels = []
+            if (this.currentHoodMarkers != null){this.leaflet.map.removeLayer(this.currentHoodMarkers);}
+            
+
             this.leaflet.neighborhood_markers.forEach(element =>{
-            let mark = new L.Marker(element.location,{title: element.marker, clickable: true}).addTo(this.leaflet.map);
+            let mark = new L.Marker(element.location,{title: element.marker, clickable: true});
             let label = element.marker+ ": " + this.neighborhood_stats[element.number-1]+" crimes reported.";
             mark.bindPopup(label);
-        })
+            labels.push(mark);
+            });
+            this.currentHoodMarkers = L.layerGroup(labels).addTo(this.leaflet.map);
+        
         },
         Locate(){ //Takes the center of the current map view and tries to place marker as close as possible.
             if(this.current_marker != null){
                 this.leaflet.map.removeLayer(this.current_marker)
             }
+            greenIcon = new L.Icon({
+                iconUrl: '2x-green.png',
+                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34],
+                shadowSize: [41, 41]
+                });
             
             let url = 'https://nominatim.openstreetmap.org/search?q=' + this.lookup +
               '&format=json&limit=25&accept-language=en';
               this.getJSON(url)
               .then((data)=>{
-                this.current_marker = new L.Marker([data[0].lat,data[0].lon]);
-                this.current_marker.addTo(this.leaflet.map);
+                this.current_marker = new L.Marker([data[0].lat,data[0].lon],{icon: this.greenIcon}).addTo(this.leaflet.map);
                 this.leaflet.map.setView([data[0].lat, data[0].lon], 15);
                 
                 console.log("DATA", data);
@@ -162,6 +177,17 @@ export default {
             .then(()=>{
                 this.PopulateTable();
             })
+        },
+        CreateMarkers(){
+            console.log('I ran');
+            this.greenIcon = new L.Icon({
+                iconUrl: '2x-green.png',
+                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34],
+                shadowSize: [41, 41]
+                });
         },
         viewMap(event) {
             this.view = 'map';
@@ -215,6 +241,7 @@ export default {
         }
     },
     mounted() {
+        this.CreateMarkers();
         this.leaflet.map = L.map('leafletmap').setView([this.leaflet.center.lat, this.leaflet.center.lng], this.leaflet.zoom);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
