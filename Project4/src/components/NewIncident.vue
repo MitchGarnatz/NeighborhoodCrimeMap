@@ -10,6 +10,7 @@
                 police_grid: null,
                 neighborhood_number: null,
                 block: "",
+                formSubmitted: false,
                 failed: false
             }
         },
@@ -19,10 +20,10 @@
                     "case_number": parseInt(this.case_number),
                     "date": this.date,
                     "time": this.time,
-                    "code": this.code,
+                    "code": parseInt(this.code),
                     "incident": this.incident,
-                    "police_grid": this.police_grid,
-                    "neighborhood_number": this.neighborhood_number,
+                    "police_grid": parseInt(this.police_grid),
+                    "neighborhood_number": parseInt(this.neighborhood_number),
                     "block": this.block
                 };
                 if(this.validate(incident_data)) {
