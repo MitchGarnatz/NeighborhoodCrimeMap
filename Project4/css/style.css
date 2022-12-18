@@ -12,3 +12,27 @@ html {
 table, tr, td{
     border:2px solid;
 }
+
+ul li {
+    list-style: decimal;
+    list-style-position: inside;
+}
+
+.sectionBlue{
+    background-color: #E0FFFF;
+    margin-top: 3rem;
+}
+
+.sectionGreen{
+    background-color: #caedca;
+    margin-top: 3rem;
+}
+
+.sectionGreen li{
+    background-color: lightgrey;
+}
+
+.sectionGreen p{
+
+    padding-top: .5rem;
+}
