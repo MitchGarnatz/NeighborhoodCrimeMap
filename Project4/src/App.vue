@@ -200,7 +200,7 @@ export default {
         },
         DeleteInc(inc){
             console.log("DELETE: "+'http://localhost:8888/remove-incident?case_number=' + inc);
-            this.uploadJSON('DELETE','http://localhost:8888/remove-incident?case_number=' + inc);
+            this.uploadJSON('DELETE','http://localhost:8888/remove-incident?case_number=' + inc, { case_number:inc });
         },
         viewMap(event) {
             this.view = 'map';

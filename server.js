@@ -17,7 +17,7 @@ let port = 8888;
 app.use(express.json());
 
 app.use(cors({
-    origin: 'http://127.0.0.1:8000'
+    //origin: 'http://127.0.0.1:8000'
 }));
 
 // Open SQLite3 database (in read-write mode)
