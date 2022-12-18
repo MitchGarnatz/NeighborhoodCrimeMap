@@ -24,48 +24,14 @@ export default {
             narcotic: false,
             property: false,
             violent: false,
-            north: false,
-            east: false,
-            central: false,
-            west: false,
             start_date: "2014-08-14",
             end_date: "2022-05-31",
             max_result: 1000,
-
-            selected1: 'select a year',
-            options1: [
-                { text: 'Year', value: 'select a year'},
-                { text: '2014', value: '2014' },
-                { text: '2015', value: '2015' },
-                { text: '2016', value: '2016' },
-                { text: '2015', value: '2017' },
-                { text: '2016', value: '2018' }
-            ],
-
-            selected2: 'select a month',
-            options2: [
-                { text: 'Month', value: 'select a month'},
-                { text: '2014', value: '2014' },
-                { text: '2015', value: '2015' },
-                { text: '2016', value: '2016' },
-                { text: '2015', value: '2017' },
-                { text: '2016', value: '2018' }
-            ],
-
-            selected3: 'select a day',
-            options3: [
-                { text: 'Day', value: 'select a day'},
-                { text: '2014', value: '2014' },
-                { text: '2015', value: '2015' },
-                { text: '2016', value: '2016' },
-                { text: '2015', value: '2017' },
-                { text: '2016', value: '2018' }
-            ],
             codes: [],
             neighborhoods: [],
             neighborhood_stats: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             incidents: [],
-            args: [], //Dont know if we will need this to be global but i figured it wouldn't hurt. Currently just stores what neighborhoods numbers to include in table.
+            args: [], //Dont know if we will need this to be global but i figured it wouldn't hurt.
             NewIncidentData: null,
             leaflet: {
                 map: null,
@@ -110,7 +76,7 @@ export default {
 
         FilterList(){
             let newList = [];
-            if (this.violent || this.property || this.narcotic || this.east || this.west || this.central) {
+            if (this.violent || this.property || this.narcotic ) {
                 this.incidents.forEach(element => {
                     if(this.violent && element.code > 99 && element.code < 454){
                         newList.push(element);
@@ -121,15 +87,7 @@ export default {
                     else if (this.narcotic && element.code > 1799 && element.code < 9987){
                         newList.push(element);
                     }
-                    else if(this.east && element.neighborhood_number > 0 && element.neighborhood_number < 6){
-                        newList.push(element);
-                    }
-                    else if (this.central && element.neighborhood_number > 5 && element.neighborhood_number < 10 || this.central && element.neighborhood_number === 17) {
-                        newList.push(element);
-                    }
-                    else if (this.west && element.neighborhood_number > 9 && element.neighborhood_number < 17){
-                        newList.push(element);
-                    }
+                    
                 })
             }
             else {
@@ -178,7 +136,7 @@ export default {
             this.leaflet.neighborhood_markers.forEach(element =>{
             let mark = new L.Marker(element.location,{title: element.marker, clickable: true}).addTo(this.leaflet.map);
             let label = element.marker+ ": " + this.neighborhood_stats[element.number-1]+" crimes reported.";
-            mark.bindPopup(label).openPopup();
+            mark.bindPopup(label);
         })
         },
         Locate(){ //Takes the center of the current map view and tries to place marker as close as possible.
@@ -200,7 +158,10 @@ export default {
         },
         DeleteInc(inc){
             console.log("DELETE: "+'http://localhost:8888/remove-incident?case_number=' + inc);
-            this.uploadJSON('DELETE','http://localhost:8888/remove-incident?case_number=' + inc, { case_number:inc });
+            this.uploadJSON('DELETE','http://localhost:8888/remove-incident?case_number=' + inc, { case_number:inc })
+            .then(()=>{
+                this.PopulateTable();
+            })
         },
         viewMap(event) {
             this.view = 'map';
