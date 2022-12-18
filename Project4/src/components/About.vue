@@ -31,20 +31,23 @@ export default {
                 
                 <div v-if="isShowMichael">
                     <p>Hello Michael</p>
-
+                    <a href="https://github.com/MFrancomb1/" target="_blank">Micahel's GitHub</a>
+                    <br>
+                    <a href="https://www.linkedin.com/in/michael-francomb-18abb9238" target="_blank">Michael's Linkedin</a>
+                    <br>
                     <button @click="isShowMichael = !isShowMichael">Close Michael's Information</button>
                 </div>
 
                 <div class="grid-x">
                     <div style="text-align: center;" class="small-12 large-3 cell">
                         <div v-if="!isShowMichael">
-                            <img src="./images/download.png" alt="no image" width="200"/>
+                            <img src="./images/Francomb.jpg" alt="no image" width="200"/>
                         </div>
                     </div>
 
                     <div style="text-align: center;" class="small-12 large-6 cell">
                         <div v-if="!isShowMichael">
-                            <li><p>Mitchell R. Garnatz</p></li>
+                            <li><p>R. Michael Francomb</p></li>
                             <li><p>Senior Graduating May 2023</p></li>
                             <li><p>Major: Computer Science</p></li>
                         </div>
