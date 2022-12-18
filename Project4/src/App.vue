@@ -27,6 +27,7 @@ export default {
             max_result: 1000,
             currentHoodMarkers: null,
             greenIcon: null,
+            NeighborhoodLayer: null,
             codes: [],
             neighborhoods: [],
             neighborhood_stats: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -146,24 +147,8 @@ export default {
             })
             this.args = [];
         },
-        PlaceMarkers(){ //Places markers on all of the neighborhoods
-            let labels = []
-            if (this.currentHoodMarkers != null){this.leaflet.map.removeLayer(this.currentHoodMarkers);}
-            
-
-            this.leaflet.neighborhood_markers.forEach(element =>{
-            let mark = new L.Marker(element.location,{title: element.marker, clickable: true});
-            let label = element.marker+ ": " + this.neighborhood_stats[element.number-1]+" crimes reported.";
-            mark.bindPopup(label);
-            labels.push(mark);
-            });
-            this.currentHoodMarkers = L.layerGroup(labels).addTo(this.leaflet.map);
-        
-        },
         Locate(){ //Takes the center of the current map view and tries to place marker as close as possible.
-            if(this.current_marker != null){
-                this.leaflet.map.removeLayer(this.current_marker)
-            }
+            
             greenIcon = new L.Icon({
                 iconUrl: '2x-green.png',
                 shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
@@ -258,11 +243,29 @@ export default {
                 }).catch( (reason) => {
                     console.log(reason);
                 });
+        },
+        PlaceMarkers(){ //Places markers on all of the neighborhoods. Called everytime populatetable is called.
+            let labels = []
+            if (this.NeighborhoodLayer != null){this.leaflet.map.removeControlLayer(this.NeighborhoodLayer);}
+            
+            this.leaflet.neighborhood_markers.forEach(element =>{
+                let mark = new L.Marker(element.location,{title: element.marker, clickable: true});
+                let label = element.marker+ ": " + this.neighborhood_stats[element.number-1]+" crimes reported.";
+                mark.bindPopup(label);
+                labels.push(mark);
+            });
+            this.currentHoodMarkers = L.layerGroup(labels);
+            var clearLayer=L.layerGroup([]);
+            var Map = {
+                'ClearMap': clearLayer,
+                'NeighborhoodMarkers' : this.currentHoodMarkers
+            };
+            this.NeighborhoodLayer = L.control.layers(Map).addTo(this.leaflet.map);
         }
     },
     mounted() {
-        this.CreateMarkers();
-        this.leaflet.map = L.map('leafletmap').setView([this.leaflet.center.lat, this.leaflet.center.lng], this.leaflet.zoom);
+        //this.CreateMarkers();
+        this.leaflet.map = L.map('leafletmap').setView([this.leaflet.center.lat, this.leaflet.center.lng], this.leaflet.zoom,);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
             minZoom: 11,
@@ -306,6 +309,9 @@ export default {
         });
 
         this.leaflet.map.on('zoomend', ()=> { //Updtaes map with center address and what neighborhoods to include in the table
+            if(this.current_marker != null){
+                this.leaflet.map.removeLayer(this.current_marker)
+            }
             console.log("Center: ", this.leaflet.map.getCenter());
             if(this.current_marker != null){
                 this.leaflet.map.removeLayer(this.current_marker)
