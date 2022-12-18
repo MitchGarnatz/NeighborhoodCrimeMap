@@ -73,6 +73,19 @@ export default {
         NewIncident
     },
     methods: {
+        statusColor(codeNumber){
+            if(codeNumber > 99 && codeNumber < 454){ 
+                return '#FFCCCB'; 
+            } 
+            if(codeNumber > 499 && codeNumber < 1437){ 
+                return '#FFD580'; 
+            } 
+            if(codeNumber > 1799 && codeNumber < 9987){ 
+                return '#FFFF99'; 
+            } else { 
+                return 'white'; 
+            }
+        },
 
         FilterList(){
             let newList = [];
@@ -370,38 +383,6 @@ export default {
                         {{neighborhood.marker}}
                     </li>
                 </ul>
-                    
-
-                    <!--<select v-model="selected1">
-                        <option v-for="option in options1" :value="option.value">
-                            {{ option.text }}
-                        </option>
-                    </select>
-                    <select v-model="selected2">
-                        <option v-for="option in options2" :value="option.value">
-                            {{ option.text }}
-                        </option>
-                    </select>
-                    <select v-model="selected3">
-                        <option v-for="option in options3" :value="option.value">
-                            {{ option.text }}
-                        </option>
-                    </select>
-
-	                <div>Selected: {{ selected }}</div>
-            
-                    <div class = "cell 12">
-                        <input type="checkbox" id="East" value=false v-model="east" />
-                        <label for="East">East</label>
-                        {{east}}
-                        <input type="checkbox" id="Central" value=false v-model="central" />
-                        <label for="Central">Central</label>
-                        {{central}}
-                        <input type="checkbox" id="West" value=false v-model="west" />
-                        <label for="West">West</label>
-                        {{west}}
-                    </div>
-                    -->
                 
                     <!--The table of incidents. No idea what data he wants in it this is the bare minimum. 
                     Remove 2nd neighbohood when all done, just shows neighborhood number for now-->
@@ -416,7 +397,7 @@ export default {
                         <td>Code</td>
                         <td>Delete</td>
                     </tr>
-                    <tr v-for="incident in FilterList()">
+                    <tr v-for="incident in FilterList()" v-bind:style="{ 'background-color': statusColor(incident.code) }">
                         <td>{{incident.case_number}}</td>
                         <td>{{incident.date}}</td>
                         <td>{{incident.incident}}</td>
