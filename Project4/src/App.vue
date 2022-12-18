@@ -352,7 +352,8 @@ export default {
         }).catch((err)=>{
             console.log(err);
         })
-        
+        this.PlaceMarkers();
+        this.currentHoodMarkers.addTo(this.leaflet.map);
     }
 }
 </script>
