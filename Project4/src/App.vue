@@ -148,21 +148,11 @@ export default {
             this.args = [];
         },
         Locate(){ //Takes the center of the current map view and tries to place marker as close as possible.
-            
-            greenIcon = new L.Icon({
-                iconUrl: '2x-green.png',
-                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-                iconSize: [25, 41],
-                iconAnchor: [12, 41],
-                popupAnchor: [1, -34],
-                shadowSize: [41, 41]
-                });
-            
             let url = 'https://nominatim.openstreetmap.org/search?q=' + this.lookup +
               '&format=json&limit=25&accept-language=en';
               this.getJSON(url)
               .then((data)=>{
-                this.current_marker = new L.Marker([data[0].lat,data[0].lon],{icon: this.greenIcon}).addTo(this.leaflet.map);
+                this.current_marker = new L.Marker([data[0].lat,data[0].lon]).addTo(this.leaflet.map);
                 this.leaflet.map.setView([data[0].lat, data[0].lon], 15);
                 
                 console.log("DATA", data);
@@ -175,17 +165,6 @@ export default {
             .then(()=>{
                 this.PopulateTable();
             })
-        },
-        CreateMarkers(){
-            console.log('I ran');
-            this.greenIcon = new L.Icon({
-                iconUrl: '2x-green.png',
-                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-                iconSize: [25, 41],
-                iconAnchor: [12, 41],
-                popupAnchor: [1, -34],
-                shadowSize: [41, 41]
-                });
         },
         viewMap(event) {
             this.view = 'map';
@@ -256,15 +235,49 @@ export default {
             });
             this.currentHoodMarkers = L.layerGroup(labels);
             var clearLayer=L.layerGroup([]);
-            var Map = {
-                'ClearMap': clearLayer,
+            var BaseMap = {};
+            var OverlayMap = {
                 'NeighborhoodMarkers' : this.currentHoodMarkers
             };
-            this.NeighborhoodLayer = L.control.layers(Map).addTo(this.leaflet.map);
+            this.NeighborhoodLayer = L.control.layers(BaseMap,OverlayMap).addTo(this.leaflet.map);
+        },
+        CreateIncidentMarker(inc){
+            let greenIcon = new L.Icon({
+                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34],
+                shadowSize: [41, 41]
+                });
+                
+            let url = 'https://nominatim.openstreetmap.org/search?q=';
+            let string = inc.block.split(' ');
+
+            if( /[0-9]/.test(string[0][0] )){
+                let NewBlock = '';
+                for(let i = 0; i<string[0].length; i++){
+                    if(string[0][i] == 'X'){NewBlock = NewBlock + '0';}
+                    else{NewBlock = NewBlock + string[0][i]}
+                }
+                string[0] = NewBlock;
+                string.forEach(element => {
+                    url = url + element + ' '
+                })
+                url = url + '&format=json&limit=25&accept-language=en';
+            } else {
+                url = 'https://nominatim.openstreetmap.org/search?q=' + inc.block +
+                      '&format=json&limit=25&accept-language=en';
+            }
+            console.log('Creating marker at:' + url);
+            this.getJSON(url)
+            .then((data)=>{
+                let IncMarker = new L.Marker([data[0].lat,data[0].lon],{icon: greenIcon}).addTo(this.leaflet.map);
+            })
         }
     },
     mounted() {
-        //this.CreateMarkers();
+        
         this.leaflet.map = L.map('leafletmap').setView([this.leaflet.center.lat, this.leaflet.center.lng], this.leaflet.zoom,);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -401,6 +414,7 @@ export default {
                         <td>Neighborhood</td>
                         <td>Neighborhood</td>
                         <td>Code</td>
+                        <td>Show On Map</td>
                         <td>Delete</td>
                     </tr>
                     <tr v-for="incident in FilterList()" v-bind:style="{ 'background-color': statusColor(incident.code) }">
@@ -410,6 +424,7 @@ export default {
                         <td>{{neighborhoods[incident.neighborhood_number-1].neighborhood_name}}</td>
                         <td>{{incident.neighborhood_number}}</td>
                         <td>{{incident.code}}</td>
+                        <td><button class="button" @click="CreateIncidentMarker(incident)">Show On Map</button></td>
                         <td><button class="button" @click="DeleteInc(incident.case_number)">DELETE</button></td>
                     </tr>
                 </table>   
