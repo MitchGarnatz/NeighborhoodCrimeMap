@@ -28,6 +28,10 @@ ul li {
     margin-top: 3rem;
 }
 
+.sectionGreen h1{
+    padding: 2rem;
+}
+
 .sectionGreen li{
     background-color: lightgrey;
 }
@@ -35,4 +39,26 @@ ul li {
 .sectionGreen p{
 
     padding-top: .5rem;
+}
+
+dl dt{
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+}
+dl dd{
+    display: inline-block;
+    margin: 0px 10px;
+    padding-bottom: 0;
+    vertical-align: middle;
+}
+dl dt.red{
+    background: #FFCCCB;
+}
+dl dt.orange{
+    background: #FFD580;
+}
+dl dt.yellow{
+    background: #FFFF99;
 }

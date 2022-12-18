@@ -137,7 +137,7 @@ export default {
             
             <div class="small-12 large-6 cell">
                 <div class="sectionGreen">
-                    <h1>Tools we incorporated into our project</h1>
+                    <h1 style="text-align: center;">Incorporated Tools</h1>
                 </div>
             </div>
 
@@ -152,19 +152,24 @@ export default {
                 <p>Vue.js is an open-source model–view–viewmodel front end JavaScript framework for building user interfaces and single-page applications. </p>
             </div>
 
+
             <!--Nominatim-->
             <div class="small-12 large-3 cell">
+                <br><br/>
                 <h2>Nominatim</h2>
             </div>
             <div class="small-12 large-3 cell">
+                <br><br/>
                 <img src="./images/nominatim.png" alt="no image" width="150"/>
             </div>
             
             <!--Leaflet-->
             <div class="small-12 large-3 cell">
+                <br><br/>
                 <h2>Leaflet</h2>
             </div>
             <div class="small-12 large-3 cell">
+                <br><br/>
                 <img src="./images/leafletimage.png" alt="no image" width="150"/>
             </div>
 
@@ -256,7 +261,7 @@ export default {
                     <li style="padding: .5rem; margin: 1rem;"><p>By a large margin, Theft and Proactive Police Visits are the most common crimes that takes place throughout the neighborhoods of St. Paul. In 2014 they were the most common and still remain the most common by the results of 2022.</p></li>
                     <li style="padding: .5rem; margin: 1rem;"><p>Of the 17 neighborhoods listed in our map, Capitol River seems to have the highest crime rate. Captiol river being in the central zone of downtown St. Paul most likely correlates to its high crime rate. </p></li>
                     <li style="padding: .5rem; margin: 1rem;"><p>From the first date in the database 08-14-2014 spanning to the last date 05-31-2022, there has been a recorded total of 391,690 incidents of crime in the neighborhood boundaries listed on the map.</p></li>
-                    <li style="padding: .5rem; margin: 1rem;"><p>Following the tragedy that took place in May of 2020 involving the death of George P. Floyd Jr. crime rates spiked greatly in the 5 period from 05-26-2020 to 02-30-2020. Much of these incidents were recorded as Theft, Vandalism, and Discharge.</p></li>
+                    <li style="padding: .5rem; margin: 1rem;"><p>Following the tragedy that took place in May of 2020 involving the death of George P. Floyd Jr. crime rates spiked greatly in the 5 day period from 05-26-2020 to 02-30-2020. Much of these incidents were recorded as Theft, Vandalism, and Discharge.</p></li>
                     </ol>
                 </div>
             </div>

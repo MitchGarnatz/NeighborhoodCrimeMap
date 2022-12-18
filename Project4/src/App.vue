@@ -386,7 +386,7 @@ export default {
                     <input type="checkbox" id="Property Crimes" v-model="property" />
                     <label for="Property Crimes">Property Crimes</label>
                     <input type="checkbox" id="Narcotics Crimes" v-model="narcotic" />
-                    <label for="Narcotics Crimes">Narcotics Crimes</label>
+                    <label for="Narcotics Crimes">Narcotics/Other Crimes</label>
                 </div>
 
                 
@@ -402,7 +402,26 @@ export default {
                         {{neighborhood.marker}}
                     </li>
                 </ul>
-                
+
+
+                <table class="cell small-12" style = "border:2px solid">
+                    <th>Legend</th>
+                    <tr style = "border:2px solid">
+                        <td>
+                            <dl>
+                                <dt class="red"></dt>
+                                <dd>Violent Crimes</dd>
+
+                                <dt class="orange"></dt>
+                                <dd>Proterty Crimes</dd>
+
+                                <dt class="yellow"></dt>
+                                <dd>Narcotic/Other Crimes</dd>
+                            </dl>
+                        </td>
+                    </tr>
+                </table>
+
                     <!--The table of incidents. No idea what data he wants in it this is the bare minimum. 
                     Remove 2nd neighbohood when all done, just shows neighborhood number for now-->
 
