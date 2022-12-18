@@ -63,6 +63,7 @@ export default {
             ],
             codes: [],
             neighborhoods: [],
+            neighborhood_stats: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             incidents: [],
             args: [], //Dont know if we will need this to be global but i figured it wouldn't hurt. Currently just stores what neighborhoods numbers to include in table.
             NewIncidentData: null,
@@ -151,17 +152,23 @@ export default {
         },
         PopulateTable(){ //Makes request to server to get incidents. Checks bounds of map to see what neighborhoods to include. 
             
-            console.log(this.start_date);
+            console.log("start date: ", this.start_date);
             let url = 'http://localhost:8888/incidents?start_date='+this.start_date+"&end_date="+this.end_date+"&limit="+this.max_result;
                 url = url + '&neighborhood='
                 this.leaflet.neighborhood_markers.forEach(element=>{
                     if(element.include){url = url + element.number + ',';}
                 })
             
-            console.log(url);
+            console.log("API GET request:", url);
             this.getJSON(url).then((data)=>{
                 this.incidents = data;
-                console.log(data);
+                this.neighborhood_stats = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                data.forEach(element=>{
+                    let n = element.neighborhood_number-1;
+                    this.neighborhood_stats[n] += 1;
+                });
+                this.PlaceMarkers();
+                console.log('incidents: ', data);
             }).catch((err)=>{
                 console.log(err);
             })
@@ -170,8 +177,8 @@ export default {
         PlaceMarkers(){ //Places markers on all of the neighborhoods
             this.leaflet.neighborhood_markers.forEach(element =>{
             let mark = new L.Marker(element.location,{title: element.marker, clickable: true}).addTo(this.leaflet.map);
-            mark.bindPopup("This is the Transamerica Pyramid").openPopup();
-            
+            let label = element.marker+ ": " + this.neighborhood_stats[element.number-1]+" crimes reported.";
+            mark.bindPopup(label).openPopup();
         })
         },
         Locate(){ //Takes the center of the current map view and tries to place marker as close as possible.
@@ -187,7 +194,7 @@ export default {
                 this.current_marker.addTo(this.leaflet.map);
                 this.leaflet.map.setView([data[0].lat, data[0].lon], 15);
                 
-                console.log(data);
+                console.log("DATA", data);
               })
             this.lookup = '';
         },
@@ -254,8 +261,6 @@ export default {
             maxZoom: 18
         }).addTo(this.leaflet.map);
         this.leaflet.map.setMaxBounds([[44.883658, -93.217977], [45.008206, -92.993787]]);
-        
-        this.PlaceMarkers();
 
         let district_boundary = new L.geoJson();
         district_boundary.addTo(this.leaflet.map);
@@ -269,42 +274,42 @@ export default {
             console.log('Error:', error);
         });
         this.leaflet.map.on('dragend', ()=> { //Updtaes map with center address and what neighborhoods to include in the table
-            console.log(this.leaflet.map.getCenter());
+            console.log("Center: ", this.leaflet.map.getCenter());
             if(this.current_marker != null){
                 this.leaflet.map.removeLayer(this.current_marker)
             }
             let url = 'https://nominatim.openstreetmap.org/reverse?lat=' + this.leaflet.map.getCenter().lat + '&lon=' + this.leaflet.map.getCenter().lng+"&format=json";
               this.getJSON(url)
               .then((data)=>{
-                console.log(data);
+                console.log("nominatim data: ", data);
                 this.current_marker = new L.Marker([data.lat,data.lon]);
                 this.current_marker.addTo(this.leaflet.map);
                 this.leaflet.map.setView([data.lat, data.lon]);
                 this.lookup = data.display_name;
-                console.log(data);
               })
               .catch((error) => {
                 console.log('Error:', error);
             });
             this.CheckHoodBounds();
             this.PopulateTable();
+
+            console.log("crime stats: ", this.neighborhood_stats);
             
         });
 
         this.leaflet.map.on('zoomend', ()=> { //Updtaes map with center address and what neighborhoods to include in the table
-            console.log(this.leaflet.map.getCenter());
+            console.log("Center: ", this.leaflet.map.getCenter());
             if(this.current_marker != null){
                 this.leaflet.map.removeLayer(this.current_marker)
             }
             let url = 'https://nominatim.openstreetmap.org/reverse?lat=' + this.leaflet.map.getCenter().lat + '&lon=' + this.leaflet.map.getCenter().lng+"&format=json";
               this.getJSON(url)
               .then((data)=>{
-                console.log(data);
+                console.log("nominatim data:", data);
                 this.current_marker = new L.Marker([data.lat,data.lon]);
                 this.current_marker.addTo(this.leaflet.map);
                 this.leaflet.map.setView([data.lat, data.lon]);
                 this.lookup = data.display_name;
-                console.log(data);
               })
               .catch((error) => {
                 console.log('Error:', error);
@@ -316,7 +321,7 @@ export default {
         this.getJSON('http://localhost:8888/neighborhoods').then((data)=>{ //Populates neighborhoods list. Should only need to do this once.
             this.neighborhoods = data;
             this.PopulateTable();
-            console.log(data);
+            console.log("neighborhoods: ", data);
         }).catch((err)=>{
             console.log(err);
         })
