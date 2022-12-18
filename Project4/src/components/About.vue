@@ -75,7 +75,7 @@ export default {
                 <div class="grid-x">
                     <div style="text-align: center;" class="small-12 large-3 cell">
                         <div v-if="!isShowDavid">
-                            <img src="./images/David.png" alt="no image" width="200"/>
+                            <img src="./images/David.jpg" alt="no image" width="200"/>
                         </div>
                     </div>
 
