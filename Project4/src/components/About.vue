@@ -149,7 +149,7 @@ export default {
             </div>
             <div class="small-12 large-3 cell">
                 <br><br/>
-                <p>this is what vue is</p>
+                <p>Vue.js is an open-source model–view–viewmodel front end JavaScript framework for building user interfaces and single-page applications. </p>
             </div>
 
             <!--Nominatim-->
@@ -170,10 +170,10 @@ export default {
 
             <!--Descriptions-->
             <div class="small-12 large-6 cell">
-                <p>this is what nominatim is</p>
+                <p>Nominatim (from the Latin, 'by name') is a tool to search OSM data by name and address (geocoding) and to generate synthetic addresses of OSM points (reverse geocoding).</p>
             </div>
             <div class="small-12 large-6 cell">
-                <p>this is what leaflet is</p>
+                <p>Leaflet is an open source JavaScript library used to build web mapping applications.</p>
             </div>
 
             <!--jQuery-->
@@ -192,10 +192,10 @@ export default {
             </div>
             <!--Descriptions-->
             <div class="small-12 large-6 cell">
-                <p>this is what jQuery is</p>
+                <p>jQuery is a JavaScript library designed to simplify HTML DOM tree traversal and manipulation, as well as event handling, CSS animation, and Ajax.</p>
             </div>
             <div class="small-12 large-6 cell">
-                <p>this is what foundation is</p>
+                <p>Foundation is a free and open-source responsive front-end framework, providing a responsive grid and HTML and CSS UI components, templates, and code snippets, including typography, forms, buttons, navigation and other interface elements, as well as optional functionality provided by JavaScript extensions.</p>
             </div>
 
 
