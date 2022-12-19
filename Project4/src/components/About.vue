@@ -92,7 +92,8 @@ export default {
 
                     <div style="text-align: center;" class="small-12 large-6 cell">
                         <div v-if="isShowDavid">
-                            Enter short bio here
+                            This spring I will be graduating with my major in Computer Science and hope to find a job soon after, preferably at some large tech firm. Outside of school I enjoy playing video
+                            games with my friends, reading web serials, dooming scrolling on reddit, and if the weather coperates, snowmobiling with my siblings.
                         </div>
                     </div>
                     <div style="text-align: center;" class="small-12 large-3 cell">
@@ -113,7 +114,7 @@ export default {
                         <div v-if="!isShowDavid">
                             <li><p>David Braun</p></li>
                             <li><p>Senior Graduating May 2023</p></li>
-                            <li><p>Major: Computer Science</p></li>
+                            <li><p>Major: Computer Science, Minor: Statistics</p></li>
                         </div>
                     </div>
                     

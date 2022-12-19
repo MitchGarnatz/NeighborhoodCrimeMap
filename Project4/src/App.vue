@@ -279,8 +279,8 @@ export default {
             this.getJSON(url)
             .then((data)=>{
                 let IncMarker = new L.Marker([data[0].lat,data[0].lon],{icon: greenIcon}).addTo(this.leaflet.map);
-                IncMarker.bindPopup('Date: ' + inc.date + '\nTime: '+ inc.time+ '\nIncident' + inc.incident);
-                //'<button class="button" @click="DeleteInc(' + inc.case_number + ')">DELETE</button>'
+                IncMarker.bindPopup('Date: ' + inc.date + '\nTime: '+ inc.time+ '\nIncident' + inc.incident + 
+                '<button class="button" onclick="(function(this){ this.remove(); })();" > DELETE </button>' );
             })
         }
     },
@@ -376,9 +376,6 @@ export default {
         }).catch((err)=>{
             console.log(err);
         })
-        //this.PlaceMarkers();
-        //this.UpdateNeighborhoodPopups();
-        //this.currentHoodMarkers.addTo(this.leaflet.map);
     }
 }
 </script>
@@ -456,20 +453,21 @@ export default {
                     <tr style = "border:2px solid">
                         <td>Case Number</td>
                         <td>Date</td>
+                        <td>Code</td>
                         <td>Type Of Incident</td>
                         <td>Neighborhood</td>
-                        <td>Neighborhood</td>
-                        <td>Code</td>
-                        <td>Show On Map</td>
-                        <td>Delete</td>
+                        
+                        <td></td>
+                        <td></td>
                     </tr>
                     <tr v-for="incident in FilterList()" v-bind:style="{ 'background-color': statusColor(incident.code) }">
                         <td>{{incident.case_number}}</td>
                         <td>{{incident.date}}</td>
+                        <td>{{incident.time}}</td>
                         <td>{{incident.incident}}</td>
                         <td>{{neighborhoods[incident.neighborhood_number-1].neighborhood_name}}</td>
-                        <td>{{incident.neighborhood_number}}</td>
-                        <td>{{incident.code}}</td>
+                        
+                        
                         <td><button class="button" @click="CreateIncidentMarker(incident)">Show On Map</button></td>
                         <td><button class="button" @click="DeleteInc(incident.case_number)">DELETE</button></td>
                     </tr>
