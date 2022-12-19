@@ -218,7 +218,6 @@ export default {
         onSubmit(submitData) {
             // this method will store the new incident data from the NewIncident child component for use in uploadJSON
             this.NewIncidentData = submitData;
-            alert(JSON.stringify(this.NewIncidentData));
             this.uploadJSON('PUT', 'http://localhost:8888/new-incident', this.NewIncidentData)
                 .then( (data) => {
                     console.log('DATA: ', data);
