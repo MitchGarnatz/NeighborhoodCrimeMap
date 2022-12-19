@@ -246,6 +246,7 @@ export default {
                 'NeighborhoodMarkers' : this.currentHoodMarkers
             };
             this.NeighborhoodLayer = L.control.layers(BaseMap,OverlayMap).addTo(this.leaflet.map);
+            this.currentHoodMarkers.addTo(this.leaflet.map);
         },
         CreateIncidentMarker(inc){
             let greenIcon = new L.Icon({

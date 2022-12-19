@@ -35,7 +35,7 @@
                 for(var key in data) {
                     console.log('key: ',key)
                     if(data[key]===""||data[key]===null) {
-                        
+                        window.alert("Please fill out all fields and submit again.")
                         this.failed = true;
                         return false;
                     }
