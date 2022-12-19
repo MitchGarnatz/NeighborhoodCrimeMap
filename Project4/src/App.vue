@@ -407,14 +407,6 @@ export default {
                     
                 </div>
 
-                <div class = "cell small-12">
-                    <input type="checkbox" id="Violent Crimes" v-model="violent" />
-                    <label for="Violent Crimes">Violent Crimes</label>
-                    <input type="checkbox" id="Property Crimes" v-model="property" />
-                    <label for="Property Crimes">Property Crimes</label>
-                    <input type="checkbox" id="Narcotics Crimes" v-model="narcotic" />
-                    <label for="Narcotics Crimes">Narcotics/Other Crimes</label>
-                </div>
 
                 
                 <input class="cell small-3" v-model="max_result" placeholder="Max Number of Results">
@@ -429,6 +421,15 @@ export default {
                         {{neighborhood.marker}}
                     </li>
                 </ul>
+
+                <div class = "cell small-12">
+                    <input type="checkbox" id="Violent Crimes" v-model="violent" />
+                    <label for="Violent Crimes">Violent Crimes</label>
+                    <input type="checkbox" id="Property Crimes" v-model="property" />
+                    <label for="Property Crimes">Property Crimes</label>
+                    <input type="checkbox" id="Narcotics Crimes" v-model="narcotic" />
+                    <label for="Narcotics Crimes">Narcotics/Other Crimes</label>
+                </div>
 
 
                 <table class="cell small-12" style = "border:2px solid">

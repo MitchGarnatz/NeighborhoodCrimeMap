@@ -9,6 +9,15 @@ html {
     height: 100%;
 }
 
+h1 {
+    font-size: 4rem;
+    font-weight: 600;
+    background-image: linear-gradient(to left, #7ecadc, hsl(171, 55%, 46%));
+    color: transparent;
+    background-clip: text;
+    -webkit-background-clip: text;
+}  
+
 table, tr, td{
     border:2px solid;
 }
@@ -61,4 +70,8 @@ dl dt.orange{
 }
 dl dt.yellow{
     background: #FFFF99;
+}
+
+.headerBackground{
+    background-image: url('https://www.tpl.org/wp-content/uploads/2021/05/2_2021_StPaul-Minnesota_header.jpg');
 }

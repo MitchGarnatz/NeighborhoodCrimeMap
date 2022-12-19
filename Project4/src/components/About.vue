@@ -21,21 +21,37 @@ export default {
 <template>
 
 <div class="grid-container">
-        <div class="grid-x grid-padding-x">
-            <h1 class="cell auto">About the Project!</h1>
+        <div class="grid-x">
             <div class="cell 12">
-                <h2>Meet the team!</h2>
+                <div class="headerBackground"><h1>About the Project!</h1></div>
+                <img src="./images/st.paul.jpg" alt="no image" width="1500"/>  
+            </div>
+            
+
+            <div class="cell 12">
+                <h2 class="sectionBlue">Meet the team!</h2>
             </div>
 
             <div class="cell 12" style="background-color: #E0FFFF">
                 
-                <div v-if="isShowMichael">
-                    <p>Hello Michael</p>
-                    <a href="https://github.com/MFrancomb1/" target="_blank">Micahel's GitHub</a>
-                    <br>
-                    <a href="https://www.linkedin.com/in/michael-francomb-18abb9238" target="_blank">Michael's Linkedin</a>
-                    <br>
-                    <button @click="isShowMichael = !isShowMichael">Close Michael's Information</button>
+                <div class="grid-x">
+                    <div style="text-align: center;" class="small-12 large-3 cell">
+                        <div v-if="isShowMichael">
+                            <a href="https://github.com/MFrancomb1/" target="_blank">Micahel's GitHub</a>
+                            <br>
+                            <a href="https://www.linkedin.com/in/michael-francomb-18abb9238" target="_blank">Michael's Linkedin</a>
+                        </div>
+                    </div>
+                    <div style="text-align: center;" class="small-12 large-6 cell">
+                        <div v-if="isShowMichael">
+                            Enter short bio here
+                        </div>
+                    </div>
+                    <div style="text-align: center;" class="small-12 large-3 cell">
+                        <div v-if="isShowMichael">
+                            <button style="background: white; cursor: pointer;" @click="isShowMichael = !isShowMichael">Close Michael's Information</button>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="grid-x">
@@ -65,11 +81,25 @@ export default {
                 
                
             <div class="cell 12" style="background-color: whitesmoke">
-                
-                <div v-if="isShowDavid">
-                    <p>Hello David</p>
+                <div class="grid-x">
+                    <div style="text-align: center;" class="small-12 large-3 cell">
+                        <div v-if="isShowDavid">
+                            <a href="https://github.com/MFrancomb1/" target="_blank">Micahel's GitHub</a>
+                            <br>
+                            <a href="https://www.linkedin.com/in/michael-francomb-18abb9238" target="_blank">Michael's Linkedin</a>
+                        </div>
+                    </div>
 
-                    <button @click="isShowDavid = !isShowDavid">Close David's Information</button>
+                    <div style="text-align: center;" class="small-12 large-6 cell">
+                        <div v-if="isShowDavid">
+                            Enter short bio here
+                        </div>
+                    </div>
+                    <div style="text-align: center;" class="small-12 large-3 cell">
+                        <div v-if="isShowDavid">
+                            <button style="background: white; cursor: pointer;" @click="isShowDavid = !isShowDavid">Close David's Information</button>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="grid-x">
@@ -81,7 +111,7 @@ export default {
 
                     <div style="text-align: center;" class="small-12 large-6 cell">
                         <div v-if="!isShowDavid">
-                            <li><p>Mitchell R. Garnatz</p></li>
+                            <li><p>David Braun</p></li>
                             <li><p>Senior Graduating May 2023</p></li>
                             <li><p>Major: Computer Science</p></li>
                         </div>
@@ -98,10 +128,25 @@ export default {
 
 
             <div class="cell 12" style="background-color: #caedca">
-                <div v-if="isShowMitch">
-                    <p>Hello Mitch</p>
+                <div class="grid-x">
+                    <div style="text-align: center;" class="small-12 large-3 cell">
+                        <div v-if="isShowMitch">
+                            <a href="https://github.com/MitchGarnatz/" target="_blank">Mitch's GitHub</a>
+                            <br>
+                            <a href="https://www.linkedin.com/in/mitchell-garnatz/" target="_blank">Mitch's Linkedin</a>
+                        </div>
+                    </div>
 
-                    <button @click="isShowMitch = !isShowMitch">Close Mitch's Information</button>
+                    <div style="text-align: center;" class="small-12 large-6 cell">
+                        <div v-if="isShowMitch">
+                            As a computer science student at St. Thomas I have developmed a great interest in the tech field. My plans for post graduation are still in the works, both hope to be in some development field. Outside of school I enjoy spending time with my family and friends, coaching wrestling, weightlifting, and snowboarding. My dream trip would be going to the mountains somewhere in the west to snowboard.
+                        </div>
+                    </div>
+                    <div style="text-align: center;" class="small-12 large-3 cell">
+                        <div v-if="isShowMitch">
+                            <button style="background: white; cursor: pointer;" @click="isShowMitch = !isShowMitch">Close Mitch's Information</button>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="grid-x">
@@ -113,11 +158,9 @@ export default {
 
                     <div style="text-align: center;" class="small-12 large-6 cell">
                         <div v-if="!isShowMitch">
-                            <ul>
-                                <li><p>Mitchell R. Garnatz</p></li>
-                                <li><p>Senior Graduating May 2023</p></li>
-                                <li><p>Major: Computer Science</p></li>
-                            </ul>
+                            <li><p>Mitchell R. Garnatz</p></li>
+                            <li><p>Senior Graduating May 2023</p></li>
+                            <li><p>Major: Computer Science</p></li>
                         </div>
                     </div>
                     

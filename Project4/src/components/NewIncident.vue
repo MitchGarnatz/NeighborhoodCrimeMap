@@ -50,9 +50,10 @@
 <template>
     <div class="grid-container">
         <div class="grid-x grid-padding-x">
-            <h1 class="cell 12" style="background-color:aqua;">New Incident Form</h1>
+            <div class="cell 12">
+                <div class="headerBackground"><h1>New Incident Form</h1></div>
+            </div>
             <h4 class="cell 12" v-if="this.failed">Incomplete form! Please ensure that all fields are filled out and submit again.</h4>
-
 
 
             <div class="cell small-12">
