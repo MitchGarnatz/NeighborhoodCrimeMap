@@ -23,7 +23,7 @@ export default {
             property: false,
             violent: false,
             start_date: "2014-08-14",
-            end_date: "2022-05-31",
+            end_date: "2022-06-01",
             max_result: 1000,
             currentHoodMarkers: null,
             greenIcon: null,
