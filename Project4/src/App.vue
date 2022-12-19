@@ -30,6 +30,7 @@ export default {
             NeighborhoodLayer: null,
             codes: [],
             neighborhoods: [],
+            neighborhood_popups: [],
             neighborhood_stats: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             incidents: [],
             args: [], //Dont know if we will need this to be global but i figured it wouldn't hurt.
@@ -140,7 +141,7 @@ export default {
                     let n = element.neighborhood_number-1;
                     this.neighborhood_stats[n] += 1;
                 });
-                this.PlaceMarkers();
+                this.UpdateNeighborhoodPopups();
                 console.log('incidents: ', data);
             }).catch((err)=>{
                 console.log(err);
@@ -152,9 +153,13 @@ export default {
               '&format=json&limit=25&accept-language=en';
               this.getJSON(url)
               .then((data)=>{
-                this.current_marker = new L.Marker([data[0].lat,data[0].lon]).addTo(this.leaflet.map);
-                this.leaflet.map.setView([data[0].lat, data[0].lon], 15);
-                
+                if(data[0].lat > 45.008206 || data[0].lat < 44.883658 || data[0].lon < -93.217977 || data[0].lon > -92.993787){
+                    console.log("NONONONNONONO");
+                    window.alert("Outside of St.Paul");
+                } else {
+                    this.current_marker = new L.Marker([data[0].lat,data[0].lon]).addTo(this.leaflet.map);
+                    this.leaflet.map.setView([data[0].lat, data[0].lon], 15);
+                }
                 console.log("DATA", data);
               })
             this.lookup = '';
@@ -210,7 +215,6 @@ export default {
                 });
             });
         },
-
         onSubmit(submitData) {
             // this method will store the new incident data from the NewIncident child component for use in uploadJSON
             this.NewIncidentData = submitData;
@@ -223,18 +227,20 @@ export default {
                     console.log(reason);
                 });
         },
-        PlaceMarkers(){ //Places markers on all of the neighborhoods. Called everytime populatetable is called.
-            let labels = []
-            if (this.NeighborhoodLayer != null){this.leaflet.map.removeControlLayer(this.NeighborhoodLayer);}
-            
+        UpdateNeighborhoodPopups(){
+            console.log("update");
+            this.leaflet.neighborhood_markers.forEach(element =>{
+                this.neighborhood_popups[element.number-1]._popup.setContent(element.marker+ ": " + this.neighborhood_stats[element.number-1]+" crimes reported.");
+            });
+        },
+        PlaceMarkers(){ //Places markers on all of the neighborhoods. Called ONCE now.
             this.leaflet.neighborhood_markers.forEach(element =>{
                 let mark = new L.Marker(element.location,{title: element.marker, clickable: true});
                 let label = element.marker+ ": " + this.neighborhood_stats[element.number-1]+" crimes reported.";
                 mark.bindPopup(label);
-                labels.push(mark);
+                this.neighborhood_popups.push(mark);
             });
-            this.currentHoodMarkers = L.layerGroup(labels);
-            var clearLayer=L.layerGroup([]);
+            this.currentHoodMarkers = L.layerGroup(this.neighborhood_popups);
             var BaseMap = {};
             var OverlayMap = {
                 'NeighborhoodMarkers' : this.currentHoodMarkers
@@ -273,6 +279,8 @@ export default {
             this.getJSON(url)
             .then((data)=>{
                 let IncMarker = new L.Marker([data[0].lat,data[0].lon],{icon: greenIcon}).addTo(this.leaflet.map);
+                IncMarker.bindPopup('Date: ' + inc.date + '\nTime: '+ inc.time+ '\nIncident' + inc.incident);
+                //'<button class="button" @click="DeleteInc(' + inc.case_number + ')">DELETE</button>'
             })
         }
     },
@@ -288,7 +296,7 @@ export default {
 
         let district_boundary = new L.geoJson();
         district_boundary.addTo(this.leaflet.map);
-
+        this.PlaceMarkers();
         this.getJSON('/data/StPaulDistrictCouncil.geojson').then((result) => {
             // St. Paul GeoJSON
             $(result.features).each((key, value) => {
@@ -302,7 +310,13 @@ export default {
             if(this.current_marker != null){
                 this.leaflet.map.removeLayer(this.current_marker)
             }
-            let url = 'https://nominatim.openstreetmap.org/reverse?lat=' + this.leaflet.map.getCenter().lat + '&lon=' + this.leaflet.map.getCenter().lng+"&format=json";
+            let templat = this.leaflet.map.getCenter().lat;
+            let templng = this.leaflet.map.getCenter().lng;
+            if(templat > 45.008206 || templat < 44.883658 || templng < -93.217977 || templng > -92.993787){
+                    console.log("NONONONNONONO");
+                    window.alert("Outside of St.Paul");
+            } else {
+                let url = 'https://nominatim.openstreetmap.org/reverse?lat=' + templat + '&lon=' + templng+"&format=json";
               this.getJSON(url)
               .then((data)=>{
                 console.log("nominatim data: ", data);
@@ -314,8 +328,11 @@ export default {
               .catch((error) => {
                 console.log('Error:', error);
             });
+        }
+            
             this.CheckHoodBounds();
             this.PopulateTable();
+            
 
             console.log("crime stats: ", this.neighborhood_stats);
             
@@ -329,10 +346,16 @@ export default {
             if(this.current_marker != null){
                 this.leaflet.map.removeLayer(this.current_marker)
             }
-            let url = 'https://nominatim.openstreetmap.org/reverse?lat=' + this.leaflet.map.getCenter().lat + '&lon=' + this.leaflet.map.getCenter().lng+"&format=json";
+            let templat = this.leaflet.map.getCenter().lat;
+            let templng = this.leaflet.map.getCenter().lng;
+            if(templat > 45.008206 || templat < 44.883658 || templng < -93.217977 || templng > -92.993787){
+                    console.log("NONONONNONONO");
+                    window.alert("Outside of St.Paul");
+            } else {
+                let url = 'https://nominatim.openstreetmap.org/reverse?lat=' + templat + '&lon=' + templng+"&format=json";
               this.getJSON(url)
               .then((data)=>{
-                console.log("nominatim data:", data);
+                console.log("nominatim data: ", data);
                 this.current_marker = new L.Marker([data.lat,data.lon]);
                 this.current_marker.addTo(this.leaflet.map);
                 this.leaflet.map.setView([data.lat, data.lon]);
@@ -341,6 +364,7 @@ export default {
               .catch((error) => {
                 console.log('Error:', error);
             });
+        }
             this.CheckHoodBounds();
             this.PopulateTable();
         });
