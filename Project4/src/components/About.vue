@@ -37,14 +37,14 @@ export default {
                 <div class="grid-x">
                     <div style="text-align: center;" class="small-12 large-3 cell">
                         <div v-if="isShowMichael">
-                            <a href="https://github.com/MFrancomb1/" target="_blank">Micahel's GitHub</a>
+                            <a href="https://github.com/MFrancomb1/" target="_blank">Michael's GitHub</a>
                             <br>
                             <a href="https://www.linkedin.com/in/michael-francomb-18abb9238" target="_blank">Michael's Linkedin</a>
                         </div>
                     </div>
                     <div style="text-align: center;" class="small-12 large-6 cell">
                         <div v-if="isShowMichael">
-                            Enter short bio here
+                            A computer Science student at the University of St. Thomas. I have a background in education and a passion for learning. In my free time you can find me outdoors hiking, camping and enjoying nature.
                         </div>
                     </div>
                     <div style="text-align: center;" class="small-12 large-3 cell">
@@ -84,7 +84,7 @@ export default {
                 <div class="grid-x">
                     <div style="text-align: center;" class="small-12 large-3 cell">
                         <div v-if="isShowDavid">
-                            <a href="https://github.com/MFrancomb1/" target="_blank">Micahel's GitHub</a>
+                            <a href="https://github.com/MFrancomb1/" target="_blank">Michael's GitHub</a>
                             <br>
                             <a href="https://www.linkedin.com/in/michael-francomb-18abb9238" target="_blank">Michael's Linkedin</a>
                         </div>
